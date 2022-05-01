@@ -1,0 +1,3 @@
+[submodule "Plugins/UE4GitPlugin"]
+	path = Plugins/UE4GitPlugin
+	url = https://github.com/SRombauts/UE4GitPlugin.git
