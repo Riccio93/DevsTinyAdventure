@@ -21,6 +21,9 @@ class GEPLATFORMER_API AMainCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
 	float SprintMultiplier;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
+	//UAnimMontage* DoubleJumpMontage;
+
 public:
 	AMainCharacter();
 
@@ -47,6 +50,7 @@ public:
 	void StopSprinting();
 	void Walk();
 	void StopWalking();
+	void Jump();
 	//void TurnAtRate(float value);
 	//void LookUpAtRate(float value);
 

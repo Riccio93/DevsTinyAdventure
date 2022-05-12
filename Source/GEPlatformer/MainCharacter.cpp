@@ -38,6 +38,8 @@ AMainCharacter::AMainCharacter()
 	GetCharacterMovement()->AirControl = .2f;
 	JumpMaxHoldTime = .3f;
 	JumpMaxCount = 2;
+
+	//ConstructorHelpers::FObjectFinder<UAnimMontage> DoubleJumpMontage(TEXT("AnimMontage'/Game/GEPlatformer/Characters/Devvy/Animations/AM_Devvy_DoubleJump.AM_Devvy_DoubleJump'"));
 	
 }
 
@@ -125,6 +127,22 @@ void AMainCharacter::Walk()
 void AMainCharacter::StopWalking()
 {
 	GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
+}
+
+void AMainCharacter::Jump()
+{
+	if(JumpCurrentCount < JumpMaxCount)
+	{
+		if(GetCharacterMovement()->IsFalling())
+		{
+			ACharacter::PlayAnimMontage(NULL);
+			ACharacter::Jump();
+		}
+		else
+		{
+			ACharacter::Jump();
+		}
+	}	
 }
 
 //void AMainCharacter::TurnAtRate(float value)
