@@ -15,33 +15,42 @@ class GEPLATFORMER_API AMainCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* CameraComponent;
 
+	float DefaultWalkSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
+	float WalkMultiplier;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
+	float SprintMultiplier;
+
 public:
 	AMainCharacter();
 
 	//Base turn rate, in deg/sec
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera)
-	float BaseTurnRate;
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera)
+	float BaseTurnRate;*/
 
 	//Base look up/down rate, in deg/sec
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera)
-	float BaseLookUpRate;
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera)
+	float BaseLookUpRate;*/
 
-protected:
-	virtual void BeginPlay() override;
-
-public:	
-	virtual void Tick(float DeltaTime) override;
+//protected:
+//	virtual void BeginPlay() override;
+//
+//public:	
+	//virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void MoveForward(float value);
 	void MoveRight(float value);
-	void TurnAtRate(float value);
-	void LookUpAtRate(float value);
+	void Sprint();
+	void StopSprinting();
+	void Walk();
+	void StopWalking();
+	//void TurnAtRate(float value);
+	//void LookUpAtRate(float value);
 
-	/** Returns CameraBoom subobject **/
+	/** Return subobjects **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return SpringArmComponent; }
-	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return CameraComponent; }
 };
