@@ -3,13 +3,21 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+//#include "Engine/EngineTypes.h"
+//For debug messages
+#include "Engine/Engine.h"
 
 AMainCharacter::AMainCharacter()
 {
  	//Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
+	//Configure Capsule Component
 	GetCapsuleComponent()->InitCapsuleSize(44.f, 82.f);
+	/*GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMainCharacter::OnOverlapBegin);
+	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AMainCharacter::OnOverlapEnd);*/
 
 	//Create components and attach them
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
@@ -39,21 +47,43 @@ AMainCharacter::AMainCharacter()
 	JumpMaxHoldTime = .3f;
 	JumpMaxCount = 2;
 
-	//ConstructorHelpers::FObjectFinder<UAnimMontage> DoubleJumpMontage(TEXT("AnimMontage'/Game/GEPlatformer/Characters/Devvy/Animations/AM_Devvy_DoubleJump.AM_Devvy_DoubleJump'"));
-	
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DoubleJumpMontageObject(TEXT("/Game/GEPlatformer/Characters/Devvy/Animations/AM_Devvy_DoubleJump.AM_Devvy_DoubleJump"));
+	if(DoubleJumpMontageObject.Succeeded())
+		DoubleJumpMontage = DoubleJumpMontageObject.Object;
 }
 
-//void AMainCharacter::BeginPlay()
-//{
-//	Super::BeginPlay();
-//	
-//}
+void AMainCharacter::BeginPlay()
+{
+	Super::BeginPlay();
 
-//void AMainCharacter::Tick(float DeltaTime)
-//{
-//	Super::Tick(DeltaTime);
-//
-//}
+}
+
+void AMainCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	//Movement logic for the wall jump
+	if(GetCharacterMovement()->IsFalling())
+	{
+		TArray<AActor*> ActorsToIgnore;
+		ActorsToIgnore.Add(this);
+		FHitResult OutHit;
+		static FName TraceProfile = FName(TEXT("ECC_Visibility"));
+		UKismetSystemLibrary::CapsuleTraceSingleByProfile(GetWorld(), GetActorLocation(), GetActorLocation(), GetCapsuleComponent()->GetUnscaledCapsuleRadius() + 2.f, GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight() + 2.f, TraceProfile, false, ActorsToIgnore, EDrawDebugTrace::ForOneFrame, OutHit, true);
+		bIsInWallSlide = OutHit.bBlockingHit;
+		if(bIsInWallSlide)
+		{
+			if(GetCharacterMovement()->Velocity.Z <= 0)
+			{
+				GetCharacterMovement()->GravityScale = .1f;
+			}			
+		}
+		else
+		{
+			GetCharacterMovement()->GravityScale = 1.f;
+		}
+	}
+}
 
 //Binds functionality to input
 void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -70,16 +100,11 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMainCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AMainCharacter::MoveRight);
-
-	//We have 2 versions of the rotation bindings to handle different kinds of devices differently
-	//"turn" handles devices that provide an absolute delta, such as a mouse.
-	//"turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	//Not currently using Turnrate and LookUpRate
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	//PlayerInputComponent->BindAxis("TurnRate", this, &AMainCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	//PlayerInputComponent->BindAxis("LookUpRate", this, &AMainCharacter::LookUpAtRate);
 }
+
+#pragma region Movement Functions
 
 void AMainCharacter::MoveForward(float Value)
 {
@@ -135,7 +160,7 @@ void AMainCharacter::Jump()
 	{
 		if(GetCharacterMovement()->IsFalling())
 		{
-			ACharacter::PlayAnimMontage(NULL);
+			ACharacter::PlayAnimMontage(DoubleJumpMontage, 1, NAME_None);
 			ACharacter::Jump();
 		}
 		else
@@ -143,14 +168,24 @@ void AMainCharacter::Jump()
 			ACharacter::Jump();
 		}
 	}	
+
 }
 
-//void AMainCharacter::TurnAtRate(float value)
+#pragma endregion
+
+//#pragma region Collision Functions
+//
+//void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 //{
-//	AddControllerYawInput(value * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+//	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "Overlap begin function called");
+//
 //}
 //
-//void AMainCharacter::LookUpAtRate(float value)
+//void AMainCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 //{
-//	AddControllerPitchInput(value * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+//	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, "Overlap end function called");
+//
 //}
+//
+//#pragma endregion
+
