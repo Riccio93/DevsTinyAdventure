@@ -3,10 +3,15 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+//For CapsuleTraceSingleByProfile
 #include "Kismet/KismetSystemLibrary.h"
-//#include "Engine/EngineTypes.h"
+#include "Kismet/KismetMathLibrary.h"
+//For Vector Interpolation
+#include "Math/UnrealMathUtility.h"
 //For debug messages
 #include "Engine/Engine.h"
+//For ECC
+#include "Engine/EngineTypes.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -33,19 +38,22 @@ AMainCharacter::AMainCharacter()
 	SpringArmComponent->CameraRotationLagSpeed = 20.f;
 	SpringArmComponent->TargetArmLength = 600.f;
 
-	//Configure character movement's defaults...
-	//BaseTurnRate = 45.f;
-	//BaseLookUpRate = 45.f;
+	//Configure Character Movement's defaults...
 	GetCharacterMovement()->bOrientRotationToMovement = true; //Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); //...at this rotation rate
     DefaultWalkSpeed = GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	SprintMultiplier = 2.5f;
 	WalkMultiplier = .5f;
-	//...and jump defaults
+	//...and Jump defaults
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = .2f;
 	JumpMaxHoldTime = .3f;
 	JumpMaxCount = 2;
+	DefaultGravity = 1.f;
+	WallSlideDeceleration = 8.f;
+	AirJumpForce = 600.f;
+	WallJumpForce = -500.f;
+	bResetVelocityOnce = true;
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DoubleJumpMontageObject(TEXT("/Game/GEPlatformer/Characters/Devvy/Animations/AM_Devvy_DoubleJump.AM_Devvy_DoubleJump"));
 	if(DoubleJumpMontageObject.Succeeded())
@@ -62,27 +70,7 @@ void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//Movement logic for the wall jump
-	if(GetCharacterMovement()->IsFalling())
-	{
-		TArray<AActor*> ActorsToIgnore;
-		ActorsToIgnore.Add(this);
-		FHitResult OutHit;
-		static FName TraceProfile = FName(TEXT("ECC_Visibility"));
-		UKismetSystemLibrary::CapsuleTraceSingleByProfile(GetWorld(), GetActorLocation(), GetActorLocation(), GetCapsuleComponent()->GetUnscaledCapsuleRadius() + 2.f, GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight() + 2.f, TraceProfile, false, ActorsToIgnore, EDrawDebugTrace::ForOneFrame, OutHit, true);
-		bIsInWallSlide = OutHit.bBlockingHit;
-		if(bIsInWallSlide)
-		{
-			if(GetCharacterMovement()->Velocity.Z <= 0)
-			{
-				GetCharacterMovement()->GravityScale = .1f;
-			}			
-		}
-		else
-		{
-			GetCharacterMovement()->GravityScale = 1.f;
-		}
-	}
+	JumpChecks();
 }
 
 //Binds functionality to input
@@ -91,7 +79,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	check(PlayerInputComponent); //If the component doesn't exist it just stops the execution (it's like C's assert())
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMainCharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AMainCharacter::Sprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AMainCharacter::StopSprinting);
@@ -154,22 +142,90 @@ void AMainCharacter::StopWalking()
 	GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
 }
 
+#pragma endregion
+
+#pragma region Jumps Functions
+
 void AMainCharacter::Jump()
 {
-	if(JumpCurrentCount < JumpMaxCount)
+	if(JumpCount < JumpMaxCount)
 	{
 		if(GetCharacterMovement()->IsFalling())
 		{
-			ACharacter::PlayAnimMontage(DoubleJumpMontage, 1, NAME_None);
-			ACharacter::Jump();
+			
+			if(bIsInWallSlide)
+			{
+				//WallJump
+				ACharacter::PlayAnimMontage(DoubleJumpMontage, 1, NAME_None);
+				LaunchCharacter((GetActorForwardVector() * WallJumpForce) + FVector(0.f, 0.f, AirJumpForce) , true, true);
+			}
+			else
+			{
+				//Double Jump
+				ACharacter::PlayAnimMontage(DoubleJumpMontage, 1, NAME_None);
+				LaunchCharacter(GetCharacterMovement()->Velocity + FVector(0.f, 0.f, AirJumpForce), true, true);
+				JumpCount++;
+			}
 		}
 		else
 		{
+			//Normal Jump
 			ACharacter::Jump();
+			JumpCount++;
 		}
 	}	
-
 }
+
+void AMainCharacter::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	JumpCount = 0;
+	bIsInWallSlide = false;
+	GetCharacterMovement()->GravityScale = DefaultGravity;
+	GetMovementComponent()->Velocity.Z = 0;
+	SetActorRotation(FRotator(0.f, 0.f, GetActorRotation().Vector().Z));
+}
+
+void AMainCharacter::JumpChecks()
+{
+	//Movement logic for the wall jump
+	if (GetCharacterMovement()->IsFalling())
+	{
+		//Check if the player is hitting a wall
+		TArray<AActor*> ActorsToIgnore;
+		ActorsToIgnore.Add(this);
+		FHitResult OutHit;
+		UKismetSystemLibrary::CapsuleTraceSingle(GetWorld(), GetActorLocation(), GetActorLocation(), GetCapsuleComponent()->GetUnscaledCapsuleRadius() + 1.f, GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(), TraceTypeQuery2, false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
+		bIsInWallSlide = OutHit.bBlockingHit;
+
+		if (bIsInWallSlide)
+		{
+			//Turn in the opposite direction of the wall normal (ready to jump away)
+			JumpCount = JumpMaxCount - 1;
+			if (GetCharacterMovement()->Velocity.Z <= 0)
+			{
+				if (bResetVelocityOnce)
+				{
+					GetCharacterMovement()->Velocity.Z = 0;
+					bResetVelocityOnce = false;
+				}
+				GetCharacterMovement()->GravityScale = .1f;
+				FVector CurrentVelocity = GetCharacterMovement()->Velocity;
+				GetCharacterMovement()->Velocity = FMath::VInterpTo(CurrentVelocity, FVector(.0f, .0f, CurrentVelocity.Z), GetWorld()->GetDeltaSeconds(), WallSlideDeceleration);
+				//SetActorRotation(FRotator(0.f, 0.f, UKismetMathLibrary::MakeRotFromZ(OutHit.Normal).Pitch));
+				//SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), OutHit.Normal));
+				SetActorRotation(UKismetMathLibrary::MakeRotFromX(-OutHit.Normal));
+			}
+		}
+		else
+		{
+			//When leaving the wall remove "friction"
+			GetCharacterMovement()->GravityScale = DefaultGravity;
+			bResetVelocityOnce = true;
+		}
+	}
+}
+
 
 #pragma endregion
 

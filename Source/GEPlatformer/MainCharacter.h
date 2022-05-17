@@ -23,8 +23,26 @@ class GEPLATFORMER_API AMainCharacter : public ACharacter
 
 	UAnimMontage* DoubleJumpMontage;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	bool bIsInWallSlide;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
+	int JumpCount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
+	int AirJumpForce;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
+	int WallJumpForce;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
+	float DefaultGravity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
+	float WallSlideDeceleration;
+
+	bool bResetVelocityOnce;
+	
 
 public:
 	AMainCharacter();
@@ -35,6 +53,8 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
+	
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -46,6 +66,8 @@ public:
 	void Walk();
 	void StopWalking();
 	void Jump();
+	void Landed(const FHitResult& Hit);
+	
 
 	//Collision functions
 	/*UFUNCTION()
@@ -57,5 +79,6 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return SpringArmComponent; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return CameraComponent; }
 
-
+private:
+	void JumpChecks();
 };
