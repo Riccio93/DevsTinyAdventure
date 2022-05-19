@@ -69,8 +69,7 @@ public:
 	void Walk();
 	void StopWalking();
 	void Jump();
-	void Landed(const FHitResult& Hit);
-	
+	void Landed(const FHitResult& Hit);	
 
 	//Collision functions
 	/*UFUNCTION()
