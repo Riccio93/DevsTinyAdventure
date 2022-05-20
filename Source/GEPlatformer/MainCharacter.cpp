@@ -175,8 +175,7 @@ void AMainCharacter::Jump()
 				JumpCount++;
 			}
 		}	
-	}
-	
+	}	
 }
 
 //Reset everything when touching the ground after a jump (normal, double or wall jump)
@@ -199,6 +198,7 @@ void AMainCharacter::WallJumpChecks()
 		TArray<AActor*> ActorsToIgnore;
 		ActorsToIgnore.Add(this);
 		FHitResult OutHit;
+		//TODO: Check here for the trace type
 		UKismetSystemLibrary::CapsuleTraceSingle(GetWorld(), GetActorLocation(), GetActorLocation(), GetCapsuleComponent()->GetUnscaledCapsuleRadius() + 1.f, GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(), TraceTypeQuery2, false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
 		bIsInWallSlide = OutHit.bBlockingHit;
 
