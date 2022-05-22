@@ -8,10 +8,13 @@ UCLASS()
 class GEPLATFORMER_API ACoin : public APickup
 {
 	GENERATED_BODY()
-	
-	/*UFUNCTION()
-	virtual void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);*/
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup, meta = (AllowPrivateAccess = "true"))
+	class UInterpToMovementComponent* InterpToMovementComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* SMeshComponent;
+	
 public:
 	// Sets default values for this actor's properties
 	ACoin();

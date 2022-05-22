@@ -10,6 +10,7 @@
 //My Classes
 #include "InGameHUD.h"
 #include "Coin.h"
+#include "Heart.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -61,7 +62,9 @@ AMainCharacter::AMainCharacter()
 
 	CurrentCoinsCount = 0;
 	TotalCoinsCount = 5;
-	HealthValue = 1.f;
+	MaxHealthValue = 1.f;
+	HealthValue = .5f;
+	HeartHealthRecover = .25f;
 }
 
 void AMainCharacter::BeginPlay()
@@ -270,6 +273,23 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 	if(CurrentCoinsCount == TotalCoinsCount)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "You win!");
+	}
+
+	//When collecting a coin, some health is recovered
+	if(AHeart* HitHeart = Cast<AHeart>(OtherActor))
+	{
+		HealthValue += HeartHealthRecover;
+		if(HealthValue > MaxHealthValue)
+		{
+			HealthValue = MaxHealthValue;
+		}
+		OtherActor->Destroy();
+
+		AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+		if (InGameHUD)
+		{
+			InGameHUD->UpdateHealth(HealthValue);
+		}
 	}
 
 	

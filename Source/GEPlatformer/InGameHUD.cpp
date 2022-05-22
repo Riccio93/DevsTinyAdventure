@@ -30,7 +30,7 @@ void AInGameHUD::Tick(float DeltaSeconds)
 void AInGameHUD::InitializeValues(int totalCoinsCount)
 {
 	UpdateCoinsCount(0, totalCoinsCount);
-	UpdateHealth(1.f);
+	UpdateHealth(.5f); //TODO: Set to 1 when testing is done
 }
 
 void AInGameHUD::UpdateCoinsCount(int Value, int Total)
