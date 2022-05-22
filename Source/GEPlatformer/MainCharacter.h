@@ -46,7 +46,6 @@ class GEPLATFORMER_API AMainCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
 	float WallSlideDeceleration;
 
-	bool bResetVelocityOnce;
 	
 
 public:
@@ -72,10 +71,10 @@ public:
 	void Landed(const FHitResult& Hit);	
 
 	//Collision functions
-	/*UFUNCTION()
-	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
-	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);*/
+	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	//UFUNCTION()
+	//	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	//Return sub objects
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return SpringArmComponent; }
@@ -83,4 +82,8 @@ public:
 
 private:
 	void WallJumpChecks();
+
+	bool bResetVelocityOnce;
+
+	int CurrentCoinsCount;
 };

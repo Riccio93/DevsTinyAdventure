@@ -1,6 +1,7 @@
 #include "Pickup.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/RotatingMovementcomponent.h"
+#include "InGameHUD.h"
 #include "Components/InterpToMovementComponent.h"
 
 
@@ -40,5 +41,12 @@ void APickup::Tick(float DeltaTime)
 
 void APickup::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+
 	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "APickup overlap begin function called");
+
+	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+
+	if(InGameHUD)
+	{
+	}
 }

@@ -15,14 +15,13 @@ class GEPLATFORMER_API APickup : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup, meta = (AllowPrivateAccess = "true"))
 	class UInterpToMovementComponent* InterpToMovementComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* SMeshComponent;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup,  meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* CapsuleComponent;
 
-private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* SMeshComponent;
-	
 public:	
 	// Sets default values for this actor's properties
 	APickup();
@@ -37,4 +36,5 @@ public:
 
 	virtual void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	//void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 };
