@@ -2,6 +2,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/RotatingMovementcomponent.h"
 #include "Components/InterpToMovementComponent.h"
+#include "Components/PointLightComponent.h"
 
 
 // Sets default values
@@ -21,11 +22,15 @@ APickup::APickup()
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("APickup::CapsuleComponent");
 	CapsuleComponent->InitCapsuleSize(22.f, 22.f);
 	RootComponent = CapsuleComponent;
-	CapsuleComponent->SetCollisionObjectType(ECC_GameTraceChannel1); //Pickup object channel
-	
+	//CapsuleComponent->SetCollisionObjectType(ECC_GameTraceChannel1); //Pickup object channel (TODO: if unused remove from the project settings)
 	
 	SMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("APickup::SMesh");
 	SMeshComponent->SetupAttachment(RootComponent);
+
+	PointLightComponent = CreateDefaultSubobject<UPointLightComponent>("APickup::PointLightComponent");
+	PointLightComponent->SetIntensity(200.f);
+	PointLightComponent->SetCastShadows(false);
+	PointLightComponent->SetupAttachment(RootComponent);
 }
 
 void APickup::BeginPlay()
@@ -37,15 +42,3 @@ void APickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-//void APickup::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-//{
-//
-//	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "APickup overlap begin function called");
-//
-//	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-//
-//	if(InGameHUD)
-//	{
-//	}
-//}

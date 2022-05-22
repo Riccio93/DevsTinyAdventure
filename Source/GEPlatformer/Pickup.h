@@ -18,9 +18,12 @@ class GEPLATFORMER_API APickup : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* SMeshComponent;
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup,  meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* CapsuleComponent;
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup, meta = (AllowPrivateAccess = "true"))
+	class UPointLightComponent* PointLightComponent;
 
 public:	
 	// Sets default values for this actor's properties

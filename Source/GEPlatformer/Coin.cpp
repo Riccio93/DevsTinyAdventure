@@ -1,16 +1,11 @@
 #include "Coin.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/PointLightComponent.h"
 
 //Set default values
 ACoin::ACoin()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	//CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &APickup::OnOverlapBegin);
+	PointLightComponent->SetLightColor(FColor(255, 229, 18));
 }
-
-//void ACoin::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-//{
-//	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "Overlap begin function called");
-//	this->Destroy();
-//}

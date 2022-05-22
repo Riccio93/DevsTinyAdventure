@@ -15,15 +15,13 @@ class GEPLATFORMER_API AMainCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* CameraComponent;
 
-	float DefaultWalkSpeed;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
 	float WalkMultiplier;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
 	float SprintMultiplier;
-
-	UAnimMontage* DoubleJumpMontage;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	bool bIsInWallSlide;
@@ -46,7 +44,18 @@ class GEPLATFORMER_API AMainCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
 	float WallSlideDeceleration;
 
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
+	float HealthValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
+	int CurrentCoinsCount;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
+	int TotalCoinsCount;
+
+	bool bResetVelocityOnce;
+	float DefaultWalkSpeed;
+	UAnimMontage* DoubleJumpMontage;
 
 public:
 	AMainCharacter();
@@ -82,9 +91,4 @@ public:
 
 private:
 	void WallJumpChecks();
-
-	bool bResetVelocityOnce;
-
-	int CurrentCoinsCount;
-	int TotalCoinsCount;
 };

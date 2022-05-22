@@ -2,7 +2,6 @@
 
 UCoinsWidget::UCoinsWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-
 }
 
 void UCoinsWidget::NativeConstruct()
@@ -15,13 +14,17 @@ void UCoinsWidget::UpdateCoinsCount(int Value, int Total)
 	if(CoinsCountText)
 	{
 		CoinsCountText->SetText(FText::FromString(FString::FromInt(Value) + " / " + FString::FromInt(Total)));
+		if(CoinObtainedAnimation)
+		{
+			PlayAnimation(CoinObtainedAnimation, .0f, 1, EUMGSequencePlayMode::Forward, 4.f);
+		}
 	}
 }
 
-void UCoinsWidget::ResetCoins()
+void UCoinsWidget::UpdateHealthBar(float Value)
 {
-	if(CoinsCountText)
+	if(HealthBar)
 	{
-		CoinsCountText->SetText(FText::FromString(FString::FromInt(0)));
+		HealthBar->SetPercent(Value);
 	}
 }

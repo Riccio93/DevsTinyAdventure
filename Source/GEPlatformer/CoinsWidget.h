@@ -17,8 +17,17 @@ public:
 
 	void UpdateCoinsCount(int Value, int Total);
 
-	void ResetCoins();
+	void UpdateHealthBar(float Value);
+
+	//void ResetCoins();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* CoinsCountText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UProgressBar* HealthBar;
+
+private:
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	UWidgetAnimation* CoinObtainedAnimation;
 };

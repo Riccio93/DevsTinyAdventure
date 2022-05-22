@@ -61,18 +61,32 @@ AMainCharacter::AMainCharacter()
 
 	CurrentCoinsCount = 0;
 	TotalCoinsCount = 5;
-
+	HealthValue = 1.f;
 }
 
 void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Initializes values of the coins/health UI widget
+	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (InGameHUD)
+	{
+		InGameHUD->InitializeValues(TotalCoinsCount);
+	}
 }
 
 void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	WallJumpChecks();
+
+	/*AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (InGameHUD)
+	{
+		InGameHUD->UpdateHealth(HealthValue);
+	}
+	HealthValue -= 0.01f;*/
 }
 
 //Binds functionality to input
@@ -239,6 +253,7 @@ void AMainCharacter::WallJumpChecks()
 
 void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	//When collecting a coin, destroy it and add a point
 	if(ACoin* HitCoin = Cast<ACoin>(OtherActor))
 	{
 		CurrentCoinsCount += 1;
@@ -250,6 +265,8 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 			InGameHUD->UpdateCoinsCount(CurrentCoinsCount, TotalCoinsCount);
 		}
 	}
+
+	//When the player collects all coins the game is won
 	if(CurrentCoinsCount == TotalCoinsCount)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "You win!");
@@ -257,9 +274,6 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 
 	
 }
-
-#pragma endregion
-
 
 //
 //void AMainCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -269,4 +283,4 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 //}
 //
 
-
+#pragma endregion
