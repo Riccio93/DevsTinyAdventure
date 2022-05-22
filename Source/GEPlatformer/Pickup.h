@@ -12,29 +12,14 @@ class GEPLATFORMER_API APickup : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup , meta = (AllowPrivateAccess = "true"))
 	class URotatingMovementComponent* RotatingMovementComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup, meta = (AllowPrivateAccess = "true"))
-	class UInterpToMovementComponent* InterpToMovementComponent;
-
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup,  meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* CapsuleComponent;
 
-private:
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* SMeshComponent;
-	
+	class UPointLightComponent* PointLightComponent;
+
 public:	
 	// Sets default values for this actor's properties
 	APickup();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	virtual void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	//void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };

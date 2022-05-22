@@ -1,18 +1,16 @@
 #include "MainCharacter.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Math/UnrealMathUtility.h"
+//Components
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
-//For CapsuleTraceSingle
-#include "Kismet/KismetSystemLibrary.h"
-#include "Kismet/KismetMathLibrary.h"
-//For Vector Interpolation
-#include "Math/UnrealMathUtility.h"
-//For debug messages
-//#include "Engine/Engine.h"
-//For ECC
-//#include "Engine/EngineTypes.h"
+//My Classes
+#include "InGameHUD.h"
+#include "Coin.h"
+#include "Heart.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -20,9 +18,9 @@ AMainCharacter::AMainCharacter()
 
 	//Configure Capsule Component
 	GetCapsuleComponent()->InitCapsuleSize(25.f, 82.f);
-	/*GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMainCharacter::OnOverlapBegin);
-	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AMainCharacter::OnOverlapEnd);*/
+	//GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AMainCharacter::OnOverlapEnd);
 
 	//Create components and attach them
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
@@ -61,17 +59,37 @@ AMainCharacter::AMainCharacter()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DoubleJumpMontageObject(TEXT("/Game/GEPlatformer/Characters/Devvy/Animations/AM_Devvy_DoubleJump.AM_Devvy_DoubleJump"));
 	if(DoubleJumpMontageObject.Succeeded())
 		DoubleJumpMontage = DoubleJumpMontageObject.Object;
+
+	CurrentCoinsCount = 0;
+	TotalCoinsCount = 5;
+	MaxHealthValue = 1.f;
+	HealthValue = .5f;
+	HeartHealthRecover = .25f;
 }
 
 void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Initializes values of the coins/health UI widget
+	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (InGameHUD)
+	{
+		InGameHUD->InitializeValues(TotalCoinsCount);
+	}
 }
 
 void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	WallJumpChecks();
+
+	/*AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (InGameHUD)
+	{
+		InGameHUD->UpdateHealth(HealthValue);
+	}
+	HealthValue -= 0.01f;*/
 }
 
 //Binds functionality to input
@@ -231,15 +249,52 @@ void AMainCharacter::WallJumpChecks()
 }
 
 
+
 #pragma endregion
 
-//#pragma region Collision Functions
-//
-//void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-//{
-//	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "Overlap begin function called");
-//
-//}
+#pragma region Collision Functions
+
+void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	//When collecting a coin, destroy it and add a point
+	if(ACoin* HitCoin = Cast<ACoin>(OtherActor))
+	{
+		CurrentCoinsCount += 1;
+		OtherActor->Destroy();
+
+		AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+		if(InGameHUD)
+		{
+			InGameHUD->UpdateCoinsCount(CurrentCoinsCount, TotalCoinsCount);
+		}
+	}
+
+	//When the player collects all coins the game is won
+	if(CurrentCoinsCount == TotalCoinsCount)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "You win!");
+	}
+
+	//When collecting a coin, some health is recovered
+	if(AHeart* HitHeart = Cast<AHeart>(OtherActor))
+	{
+		HealthValue += HeartHealthRecover;
+		if(HealthValue > MaxHealthValue)
+		{
+			HealthValue = MaxHealthValue;
+		}
+		OtherActor->Destroy();
+
+		AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+		if (InGameHUD)
+		{
+			InGameHUD->UpdateHealth(HealthValue);
+		}
+	}
+
+	
+}
+
 //
 //void AMainCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 //{
@@ -247,5 +302,5 @@ void AMainCharacter::WallJumpChecks()
 //
 //}
 //
-//#pragma endregion
 
+#pragma endregion
