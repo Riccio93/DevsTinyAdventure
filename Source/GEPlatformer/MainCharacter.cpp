@@ -1,20 +1,15 @@
 #include "MainCharacter.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Math/UnrealMathUtility.h"
+//Components
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+//My Classes
+#include "InGameHUD.h"
 #include "Coin.h"
-
-//For CapsuleTraceSingle
-#include "Kismet/KismetSystemLibrary.h"
-#include "Kismet/KismetMathLibrary.h"
-//For Vector Interpolation
-#include "Math/UnrealMathUtility.h"
-//For debug messages
-//#include "Engine/Engine.h"
-//For ECC
-//#include "Engine/EngineTypes.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -65,6 +60,7 @@ AMainCharacter::AMainCharacter()
 		DoubleJumpMontage = DoubleJumpMontageObject.Object;
 
 	CurrentCoinsCount = 0;
+	TotalCoinsCount = 5;
 
 }
 
@@ -239,17 +235,32 @@ void AMainCharacter::WallJumpChecks()
 
 #pragma endregion
 
-//#pragma region Collision Functions
-//
+#pragma region Collision Functions
+
 void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if(ACoin* HitCoin = Cast<ACoin>(OtherActor))
 	{
+		CurrentCoinsCount += 1;
+		OtherActor->Destroy();
 
+		AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+		if(InGameHUD)
+		{
+			InGameHUD->UpdateCoinsCount(CurrentCoinsCount, TotalCoinsCount);
+		}
 	}
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "Overlap begin function called");
+	if(CurrentCoinsCount == TotalCoinsCount)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "You win!");
+	}
 
+	
 }
+
+#pragma endregion
+
+
 //
 //void AMainCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 //{
@@ -257,5 +268,5 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 //
 //}
 //
-//#pragma endregion
+
 

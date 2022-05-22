@@ -29,18 +29,18 @@ void AInGameHUD::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 
-void AInGameHUD::UpdateCoinsCount(int Value)
+void AInGameHUD::UpdateCoinsCount(int Value, int Total)
 {
 	if(CoinsWidget)
 	{
-		CoinsWidget->UpdateCoinsCount(Value);
+		CoinsWidget->UpdateCoinsCount(Value, Total);
 	}
 }
 
-void AInGameHUD::ResetCoinsCount()
-{
-	if(CoinsWidget)
-	{
-		CoinsWidget->ResetCoins();
-	}
-}
+//void AInGameHUD::ResetCoinsCount()
+//{
+//	if(CoinsWidget)
+//	{
+//		CoinsWidget->ResetCoins();
+//	}
+//}

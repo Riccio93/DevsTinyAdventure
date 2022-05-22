@@ -15,7 +15,7 @@ public:
 
 	virtual void NativeConstruct() override;
 
-	void UpdateCoinsCount(int Value);
+	void UpdateCoinsCount(int Value, int Total);
 
 	void ResetCoins();
 

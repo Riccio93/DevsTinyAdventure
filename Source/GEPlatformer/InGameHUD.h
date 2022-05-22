@@ -23,10 +23,10 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	UFUNCTION()
-	void UpdateCoinsCount(int Value);
+	void UpdateCoinsCount(int Value, int Total);
 
-	UFUNCTION()
-	void ResetCoinsCount();
+	/*UFUNCTION()
+	void ResetCoinsCount();*/
 
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
 	TSubclassOf<UUserWidget> CoinsWidgetClass;

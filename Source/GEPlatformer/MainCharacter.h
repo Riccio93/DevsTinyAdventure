@@ -86,4 +86,5 @@ private:
 	bool bResetVelocityOnce;
 
 	int CurrentCoinsCount;
+	int TotalCoinsCount;
 };
