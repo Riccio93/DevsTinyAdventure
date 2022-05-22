@@ -16,8 +16,10 @@ class GEPLATFORMER_API AMainCharacter : public ACharacter
 	class UCameraComponent* CameraComponent;
 
 	float DefaultWalkSpeed;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
 	float WalkMultiplier;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
 	float SprintMultiplier;
 
@@ -33,7 +35,10 @@ class GEPLATFORMER_API AMainCharacter : public ACharacter
 	int AirJumpForce;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
-	int WallJumpForce;
+	int WallJumpForwardForce;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
+	int WallJumpVerticalForce;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
 	float DefaultGravity;
@@ -51,14 +56,12 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void Tick(float DeltaTime) override;
-
-	
+	virtual void Tick(float DeltaTime) override;	
 	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	//Movement functions
+	//Movement and jump functions
 	void MoveForward(float value);
 	void MoveRight(float value);
 	void Sprint();
@@ -66,8 +69,7 @@ public:
 	void Walk();
 	void StopWalking();
 	void Jump();
-	void Landed(const FHitResult& Hit);
-	
+	void Landed(const FHitResult& Hit);	
 
 	//Collision functions
 	/*UFUNCTION()
@@ -75,10 +77,10 @@ public:
 	UFUNCTION()
 	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);*/
 
-	/** Return subobjects **/
+	//Return sub objects
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return SpringArmComponent; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return CameraComponent; }
 
 private:
-	void JumpChecks();
+	void WallJumpChecks();
 };

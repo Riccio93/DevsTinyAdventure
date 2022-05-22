@@ -3,23 +3,23 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-//For CapsuleTraceSingleByProfile
+
+//For CapsuleTraceSingle
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 //For Vector Interpolation
 #include "Math/UnrealMathUtility.h"
 //For debug messages
-#include "Engine/Engine.h"
+//#include "Engine/Engine.h"
 //For ECC
-#include "Engine/EngineTypes.h"
+//#include "Engine/EngineTypes.h"
 
 AMainCharacter::AMainCharacter()
 {
- 	//Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	//Configure Capsule Component
-	GetCapsuleComponent()->InitCapsuleSize(44.f, 82.f);
+	GetCapsuleComponent()->InitCapsuleSize(25.f, 82.f);
 	/*GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMainCharacter::OnOverlapBegin);
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AMainCharacter::OnOverlapEnd);*/
@@ -33,28 +33,31 @@ AMainCharacter::AMainCharacter()
 	//Configure Spring arm's defaults
 	SpringArmComponent->bUsePawnControlRotation = true;
 	SpringArmComponent->bEnableCameraLag = true;
-	SpringArmComponent->CameraLagSpeed = 5.f;
+	SpringArmComponent->CameraLagSpeed = 4.f;
 	SpringArmComponent->bEnableCameraRotationLag = true;	
 	SpringArmComponent->CameraRotationLagSpeed = 20.f;
 	SpringArmComponent->TargetArmLength = 600.f;
 
 	//Configure Character Movement's defaults...
-	GetCharacterMovement()->bOrientRotationToMovement = true; //Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); //...at this rotation rate
+	GetCharacterMovement()->bOrientRotationToMovement = true;            //Character moves in the direction of input...	
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f); //...at this rotation rate
     DefaultWalkSpeed = GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	SprintMultiplier = 2.5f;
 	WalkMultiplier = .5f;
-	//...and Jump defaults
-	GetCharacterMovement()->JumpZVelocity = 500.f;
+	//...and Jumping defaults
+	GetCharacterMovement()->JumpZVelocity = 900.f;
 	GetCharacterMovement()->AirControl = .2f;
 	JumpMaxHoldTime = .3f;
 	JumpMaxCount = 2;
-	DefaultGravity = 1.f;
+	DefaultGravity = 4.f;
 	WallSlideDeceleration = 8.f;
-	AirJumpForce = 600.f;
-	WallJumpForce = -500.f;
+	AirJumpForce = 1300.f;
+	WallJumpForwardForce = -550.f;
+	WallJumpVerticalForce = 1300.f;
 	bResetVelocityOnce = true;
+	GetCharacterMovement()->AirControl = 1.f; //At 1 the character can use the wall jump to climb a single wall, set at 0.05 if we don't want that
 
+	//Get animation montages
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DoubleJumpMontageObject(TEXT("/Game/GEPlatformer/Characters/Devvy/Animations/AM_Devvy_DoubleJump.AM_Devvy_DoubleJump"));
 	if(DoubleJumpMontageObject.Succeeded())
 		DoubleJumpMontage = DoubleJumpMontageObject.Object;
@@ -63,14 +66,12 @@ AMainCharacter::AMainCharacter()
 void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	JumpChecks();
+	WallJumpChecks();
 }
 
 //Binds functionality to input
@@ -112,11 +113,11 @@ void AMainCharacter::MoveRight(float Value)
 {
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
-		// find out which way is right
+		//Find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get right vector 
+		//Get right vector 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		AddMovementInput(Direction, Value);
 	}
@@ -148,34 +149,36 @@ void AMainCharacter::StopWalking()
 
 void AMainCharacter::Jump()
 {
-	if(JumpCount < JumpMaxCount)
+	if (bIsInWallSlide)
 	{
-		if(GetCharacterMovement()->IsFalling())
+		//WallJump
+		ACharacter::PlayAnimMontage(DoubleJumpMontage, 1, NAME_None);
+		GetCharacterMovement()->Velocity.Z = 0;
+		LaunchCharacter((GetActorForwardVector() * WallJumpForwardForce) + FVector(0.f, 0.f, WallJumpVerticalForce), true, true);
+	}
+	else
+	{
+		if(JumpCount < JumpMaxCount)
 		{
-			
-			if(bIsInWallSlide)
+			if(GetCharacterMovement()->IsFalling())
 			{
-				//WallJump
+				//Double Jump (in the air)
 				ACharacter::PlayAnimMontage(DoubleJumpMontage, 1, NAME_None);
-				LaunchCharacter((GetActorForwardVector() * WallJumpForce) + FVector(0.f, 0.f, AirJumpForce) , true, true);
-			}
-			else
-			{
-				//Double Jump
-				ACharacter::PlayAnimMontage(DoubleJumpMontage, 1, NAME_None);
+				GetCharacterMovement()->Velocity.Z = 0;
 				LaunchCharacter(GetCharacterMovement()->Velocity + FVector(0.f, 0.f, AirJumpForce), true, true);
 				JumpCount++;
 			}
-		}
-		else
-		{
-			//Normal Jump
-			ACharacter::Jump();
-			JumpCount++;
-		}
+			else
+			{
+				//Normal Jump
+				ACharacter::Jump();
+				JumpCount++;
+			}
+		}	
 	}	
 }
 
+//Reset everything when touching the ground after a jump (normal, double or wall jump)
 void AMainCharacter::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
@@ -186,40 +189,41 @@ void AMainCharacter::Landed(const FHitResult& Hit)
 	SetActorRotation(FRotator(0.f, 0.f, GetActorRotation().Vector().Z));
 }
 
-void AMainCharacter::JumpChecks()
+void AMainCharacter::WallJumpChecks()
 {
 	//Movement logic for the wall jump
 	if (GetCharacterMovement()->IsFalling())
 	{
-		//Check if the player is hitting a wall
+		//Check if the player is hitting a wall, if so set the bool bIsInWallSlide
 		TArray<AActor*> ActorsToIgnore;
 		ActorsToIgnore.Add(this);
 		FHitResult OutHit;
+		//TODO: Check here for the trace type
 		UKismetSystemLibrary::CapsuleTraceSingle(GetWorld(), GetActorLocation(), GetActorLocation(), GetCapsuleComponent()->GetUnscaledCapsuleRadius() + 1.f, GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(), TraceTypeQuery2, false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
 		bIsInWallSlide = OutHit.bBlockingHit;
 
 		if (bIsInWallSlide)
 		{
 			//Turn in the opposite direction of the wall normal (ready to jump away)
+			SetActorRotation(UKismetMathLibrary::MakeRotFromX(-OutHit.Normal));			
 			JumpCount = JumpMaxCount - 1;
 			if (GetCharacterMovement()->Velocity.Z <= 0)
 			{
+				//The moment the character enters the wall slide the vertical velocity is set to 0 (to simulate the immediate friction with the wall)...
 				if (bResetVelocityOnce)
 				{
 					GetCharacterMovement()->Velocity.Z = 0;
 					bResetVelocityOnce = false;
 				}
+				//...then the character slowly slides down
 				GetCharacterMovement()->GravityScale = .1f;
 				FVector CurrentVelocity = GetCharacterMovement()->Velocity;
-				GetCharacterMovement()->Velocity = FMath::VInterpTo(CurrentVelocity, FVector(.0f, .0f, CurrentVelocity.Z), GetWorld()->GetDeltaSeconds(), WallSlideDeceleration);
-				//SetActorRotation(FRotator(0.f, 0.f, UKismetMathLibrary::MakeRotFromZ(OutHit.Normal).Pitch));
-				//SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), OutHit.Normal));
-				SetActorRotation(UKismetMathLibrary::MakeRotFromX(-OutHit.Normal));
+				GetCharacterMovement()->Velocity = FMath::VInterpTo(CurrentVelocity, FVector(.0f, .0f, CurrentVelocity.Z), GetWorld()->GetDeltaSeconds(), WallSlideDeceleration);			
 			}
 		}
 		else
 		{
-			//When leaving the wall remove "friction"
+			//When leaving the wall remove "friction" (lowered gravity)
 			GetCharacterMovement()->GravityScale = DefaultGravity;
 			bResetVelocityOnce = true;
 		}
