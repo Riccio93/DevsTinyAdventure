@@ -2,6 +2,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Math/UnrealMathUtility.h"
+#include "Components/PrimitiveComponent.h"
 //Components
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -278,21 +279,38 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 	//When collecting a coin, some health is recovered
 	if(AHeart* HitHeart = Cast<AHeart>(OtherActor))
 	{
-		HealthValue += HeartHealthRecover;
-		if(HealthValue > MaxHealthValue)
-		{
-			HealthValue = MaxHealthValue;
-		}
-		OtherActor->Destroy();
+		RecoverHealth(HeartHealthRecover);
+		OtherActor->Destroy();		
+	}	
+}
 
-		AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-		if (InGameHUD)
-		{
-			InGameHUD->UpdateHealth(HealthValue);
-		}
+void AMainCharacter::TakeDamage(float Value)
+{
+	HealthValue -= Value;
+	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (InGameHUD)
+	{
+		InGameHUD->UpdateHealth(HealthValue);
+	}
+	if (HealthValue <= 0)
+	{
+		//TODO: Death
+	}
+}
+
+void AMainCharacter::RecoverHealth(float Value)
+{
+	HealthValue += Value;
+	if (HealthValue > MaxHealthValue)
+	{
+		HealthValue = MaxHealthValue;
 	}
 
-	
+	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (InGameHUD)
+	{
+		InGameHUD->UpdateHealth(HealthValue);
+	}
 }
 
 //
