@@ -90,6 +90,7 @@ public:
 	//Gameplay functions
 	void TakeDamage(float Value);
 	void RecoverHealth(float Value);
+	void EnemyKilledJump();
 
 	//UFUNCTION()
 	//void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);

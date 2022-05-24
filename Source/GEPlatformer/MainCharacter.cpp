@@ -84,14 +84,9 @@ void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	WallJumpChecks();
-
-	/*AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-	if (InGameHUD)
-	{
-		InGameHUD->UpdateHealth(HealthValue);
-	}
-	HealthValue -= 0.01f;*/
 }
+
+#pragma region Input Functions
 
 //Binds functionality to input
 void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -111,6 +106,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 }
+
+#pragma endregion
 
 #pragma region Movement Functions
 
@@ -190,7 +187,7 @@ void AMainCharacter::Jump()
 			else
 			{
 				//Normal Jump
-				ACharacter::Jump();
+				Super::Jump();
 				JumpCount++;
 			}
 		}	
@@ -206,6 +203,11 @@ void AMainCharacter::Landed(const FHitResult& Hit)
 	GetCharacterMovement()->GravityScale = DefaultGravity;
 	GetMovementComponent()->Velocity.Z = 0;
 	SetActorRotation(FRotator(0.f, 0.f, GetActorRotation().Vector().Z));
+}
+
+void AMainCharacter::EnemyKilledJump()
+{
+	Super::Jump();
 }
 
 void AMainCharacter::WallJumpChecks()
@@ -283,6 +285,8 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		OtherActor->Destroy();		
 	}	
 }
+
+//TODO: When killing an enemy the other collider also triggers
 
 void AMainCharacter::TakeDamage(float Value)
 {
