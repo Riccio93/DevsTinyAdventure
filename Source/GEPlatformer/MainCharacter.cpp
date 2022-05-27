@@ -300,6 +300,10 @@ void AMainCharacter::TakeDamage(float Value)
 	{
 		//TODO: Death
 	}
+	else
+	{
+		//Blink and be indestructible for a certain amount of time??
+	}
 }
 
 void AMainCharacter::RecoverHealth(float Value)
