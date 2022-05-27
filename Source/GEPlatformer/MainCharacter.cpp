@@ -45,7 +45,7 @@ AMainCharacter::AMainCharacter()
 	WalkMultiplier = .5f;
 	//...and Jumping defaults
 	GetCharacterMovement()->JumpZVelocity = 900.f;
-	GetCharacterMovement()->AirControl = .2f;
+	GetCharacterMovement()->AirControl = .1f;
 	JumpMaxHoldTime = .3f;
 	JumpMaxCount = 2;
 	DefaultGravity = 4.f;

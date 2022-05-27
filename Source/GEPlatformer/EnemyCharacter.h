@@ -7,13 +7,19 @@
 #include "EnemyCharacter.generated.h"
 
 UCLASS()
-class GEPLATFORMER_API AEnemyCharacter : public AActor
+class GEPLATFORMER_API AEnemyCharacter : public APawn
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* SceneComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy, meta = (AllowPrivateAccess = "true"))
+	float AttackDamage;
+
+	bool bIsCapsuleOverlapping;
+
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy, meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* CapsuleComponent;
 
@@ -22,11 +28,6 @@ class GEPLATFORMER_API AEnemyCharacter : public AActor
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy, meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* SkeletalMeshComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy, meta = (AllowPrivateAccess = "true"))
-	float AttackDamage;
-
-	bool bIsCapsuleOverlapping;
 	
 public:	
 	// Sets default values for this actor's properties

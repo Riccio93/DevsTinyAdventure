@@ -16,23 +16,17 @@ AEnemyCharacter::AEnemyCharacter()
 
 	//Configure Capsule Component
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("CapsuleCollisionComponent");
-	CapsuleComponent->AttachToComponent(SceneComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	CapsuleComponent->InitCapsuleSize(183.f, 110.f);
-	CapsuleComponent->AddRelativeRotation(FRotator(90.f, 0.f, 0.f));
+	CapsuleComponent->AttachToComponent(SceneComponent, FAttachmentTransformRules::KeepRelativeTransform);	
 	CapsuleComponent->SetGenerateOverlapEvents(true);
 	CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnCapsuleOverlapBegin);
 	CapsuleComponent->OnComponentEndOverlap.AddDynamic(this, &AEnemyCharacter::OnCapsuleOverlapEnd);
 
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>("BoxCollisionComponent");
 	BoxComponent->AttachToComponent(SceneComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	BoxComponent->InitBoxExtent(FVector(145.f, 65.f, 10.f));
-	BoxComponent->AddRelativeLocation(FVector(0.f, 0.f, 125.f));
 	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnBoxOverlapBegin);
 
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComponent");
 	SkeletalMeshComponent->AttachToComponent(SceneComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	SkeletalMeshComponent->AddWorldRotation(FRotator(0.f, -90.f, 0.f));
-	SkeletalMeshComponent->AddRelativeLocation(FVector(0.f, 0.f, -90.f));
 
 	AttackDamage = .25f;
 	bIsCapsuleOverlapping = false;
