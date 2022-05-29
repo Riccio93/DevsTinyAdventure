@@ -94,9 +94,6 @@ public:
 	void AddCoinsToCounter(int coins);
 	void EnemyKilledJump();
 
-	//UFUNCTION()
-	//void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
 	//Return sub objects
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return SpringArmComponent; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return CameraComponent; }

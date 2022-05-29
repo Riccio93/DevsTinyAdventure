@@ -215,13 +215,14 @@ void AMainCharacter::WallJumpChecks()
 	//Movement logic for the wall jump
 	if (GetCharacterMovement()->IsFalling())
 	{
-		//Check if the player is hitting a wall, if so set the bool bIsInWallSlide
+		//Check if the player is hitting a wall suitable for wall jumps, if so set the bool bIsInWallSlide
 		TArray<AActor*> ActorsToIgnore;
 		ActorsToIgnore.Add(this);
 		FHitResult OutHit;
-		//TODO: Check here for the trace type
-		UKismetSystemLibrary::CapsuleTraceSingle(GetWorld(), GetActorLocation(), GetActorLocation(), GetCapsuleComponent()->GetUnscaledCapsuleRadius() + 1.f, GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(), TraceTypeQuery2, false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
-		bIsInWallSlide = OutHit.bBlockingHit;
+		//Trace channel with walls suitable for wall jumps
+		ETraceTypeQuery JumpWallTrace = UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_GameTraceChannel3);
+		UKismetSystemLibrary::CapsuleTraceSingle(GetWorld(), GetActorLocation(), GetActorLocation(), GetCapsuleComponent()->GetUnscaledCapsuleRadius() + 1.f, GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(), JumpWallTrace, false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
+		bIsInWallSlide = OutHit.bBlockingHit;	
 
 		if (bIsInWallSlide)
 		{
@@ -250,8 +251,6 @@ void AMainCharacter::WallJumpChecks()
 		}
 	}
 }
-
-
 
 #pragma endregion
 
@@ -325,13 +324,5 @@ void AMainCharacter::RecoverHealth(float Value)
 		InGameHUD->UpdateHealth(HealthValue);
 	}
 }
-
-//
-//void AMainCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-//{
-//	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, "Overlap end function called");
-//
-//}
-//
 
 #pragma endregion
