@@ -54,7 +54,7 @@ AMainCharacter::AMainCharacter()
 	WallJumpForwardForce = -550.f;
 	WallJumpVerticalForce = 1300.f;
 	bResetVelocityOnce = true;
-	GetCharacterMovement()->AirControl = 1.f; //At 1 the character can use the wall jump to climb a single wall, set at 0.05 if we don't want that
+	GetCharacterMovement()->AirControl = .05f; //At 1 the character can use the wall jump to climb a single wall, set at 0.05 if we don't want that
 
 	//Get animation montages
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DoubleJumpMontageObject(TEXT("/Game/GEPlatformer/Characters/Devvy/Animations/AM_Devvy_DoubleJump.AM_Devvy_DoubleJump"));

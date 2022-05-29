@@ -1,5 +1,5 @@
 #include "EnemyCharacter.h"
-#include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
 
 #include "MainCharacter.h"
@@ -11,12 +11,9 @@ AEnemyCharacter::AEnemyCharacter()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	//Configure Capsule Component
-	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("CapsuleCollisionComponent");
-	CapsuleComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);	
-	CapsuleComponent->SetGenerateOverlapEvents(true);
-	CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnCapsuleOverlapBegin);
-	CapsuleComponent->OnComponentEndOverlap.AddDynamic(this, &AEnemyCharacter::OnCapsuleOverlapEnd);
+	GetCollisionComponent()->SetGenerateOverlapEvents(true);
+	GetCollisionComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnSphereOverlapBegin);
+	GetCollisionComponent()->OnComponentEndOverlap.AddDynamic(this, &AEnemyCharacter::OnSphereOverlapEnd);	
 
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>("BoxCollisionComponent");
 	BoxComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
@@ -30,7 +27,7 @@ AEnemyCharacter::AEnemyCharacter()
 	bIsCapsuleOverlapping = false;
 }
 
-void AEnemyCharacter::OnCapsuleOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AEnemyCharacter::OnSphereOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if(AMainCharacter* MainCharacter = Cast<AMainCharacter>(OtherActor))
 	{
@@ -39,7 +36,7 @@ void AEnemyCharacter::OnCapsuleOverlapBegin(class UPrimitiveComponent* Overlappe
 	}
 }
 
-void AEnemyCharacter::OnCapsuleOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void AEnemyCharacter::OnSphereOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (AMainCharacter* MainCharacter = Cast<AMainCharacter>(OtherActor))
 	{
