@@ -262,14 +262,8 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 	//When collecting a coin, destroy it and add a point
 	if(ACoin* HitCoin = Cast<ACoin>(OtherActor))
 	{
-		CurrentCoinsCount += 1;
-		OtherActor->Destroy();
-
-		AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-		if(InGameHUD)
-		{
-			InGameHUD->UpdateCoinsCount(CurrentCoinsCount, TotalCoinsCount);
-		}
+		AddCoinsToCounter(1);		
+		OtherActor->Destroy();		
 	}
 
 	//When the player collects all coins the game is won
@@ -278,7 +272,7 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "You win!");
 	}
 
-	//When collecting a coin, some health is recovered
+	//When collecting an heart, some health is recovered
 	if(AHeart* HitHeart = Cast<AHeart>(OtherActor))
 	{
 		RecoverHealth(HeartHealthRecover);
@@ -286,7 +280,18 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 	}	
 }
 
-//TODO: When killing an enemy the other collider also triggers
+void AMainCharacter::AddCoinsToCounter(int coins)
+{
+	CurrentCoinsCount += coins;
+
+	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (InGameHUD)
+	{
+		InGameHUD->UpdateCoinsCount(CurrentCoinsCount, TotalCoinsCount);
+	}
+}
+
+
 
 void AMainCharacter::TakeDamage(float Value)
 {

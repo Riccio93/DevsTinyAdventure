@@ -1,29 +1,31 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/DefaultPawn.h"
 #include "EnemyCharacter.generated.h"
 
-UCLASS()
-class GEPLATFORMER_API AEnemyCharacter : public APawn
+UCLASS(Abstract, Blueprintable)
+class GEPLATFORMER_API AEnemyCharacter : public ADefaultPawn
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy, meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* SceneComponent;
+		/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy, meta = (AllowPrivateAccess = "true"))
+		class USceneComponent* SceneComponent;*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy, meta = (AllowPrivateAccess = "true"))
 	float AttackDamage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy, meta = (AllowPrivateAccess = "true"))
+	int CoinsGivenToPlayer;
+
 	bool bIsCapsuleOverlapping;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy, meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* CapsuleComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* BoxComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy, meta = (AllowPrivateAccess = "true"))
@@ -32,6 +34,9 @@ protected:
 public:	
 	// Sets default values for this actor's properties
 	AEnemyCharacter();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI")
+	class UBehaviorTree* BehaviorTree;
 
 	//Collision functions
 	UFUNCTION()

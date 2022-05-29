@@ -1,6 +1,7 @@
 #include "RatEnemy.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/BoxComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 
 
 ARatEnemy::ARatEnemy()
@@ -16,6 +17,16 @@ ARatEnemy::ARatEnemy()
 	SkeletalMeshComponent->AddWorldRotation(FRotator(0.f, -90.f, 0.f));
 	SkeletalMeshComponent->AddRelativeLocation(FVector(0.f, 0.f, -90.f));
 
-	/*AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	AIControllerClass = ControllerClass;*/
+	//GetMovementComponent()->MaxSpeed = 600.f;
+	
 };
+
+APatrolPath* ARatEnemy::GetPatrolPath()
+{
+	return PatrolPath;
+}
+
+int ARatEnemy::GetNumberOfPoints()
+{
+	return PatrolPath->NumberOfPoints();
+}
