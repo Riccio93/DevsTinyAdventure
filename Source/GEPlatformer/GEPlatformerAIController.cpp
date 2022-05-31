@@ -19,9 +19,9 @@ AGEPlatformerAIController::AGEPlatformerAIController(const FObjectInitializer& O
 	//AIPerception
 	PerceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception Component"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("AI Sight Config"));
-	SightConfig->SightRadius = 1000.f;
-	SightConfig->LoseSightRadius = 1020.f;
-	SightConfig->PeripheralVisionAngleDegrees = 90.0f;
+	SightConfig->SightRadius = 1200.f;
+	SightConfig->LoseSightRadius = 1225.f;
+	SightConfig->PeripheralVisionAngleDegrees = 120.0f;
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
@@ -35,11 +35,13 @@ void AGEPlatformerAIController::OnSightUpdated(AActor* UpdatedActor, FAIStimulus
 	{
 		if(Stimulus.WasSuccessfullySensed())
 		{
-
+			//Timer??
+			GetBlackboardComponent()->SetValueAsObject("EnemyActor", MC);
 			UE_LOG(LogTemp, Warning, TEXT("Detecting!"));
 		}
 		else
 		{
+			GetBlackboardComponent()->SetValueAsObject("EnemyActor", nullptr);
 			UE_LOG(LogTemp, Warning, TEXT("Not detecting!"));
 		}		
 	}	

@@ -11,3 +11,13 @@ AMonsterEnemy::AMonsterEnemy()
 	//SkeletalMeshComponent->AddWorldRotation(FRotator(0.f, -90.f, 0.f));
 	SkeletalMeshComponent->AddRelativeLocation(FVector(0.f, 0.f, -25.f));
 }
+
+void AMonsterEnemy::Attack()
+{
+	//PlayMontage()
+}
+
+void Tick(float DeltaSeconds)
+{
+
+}

@@ -11,4 +11,5 @@ class GEPLATFORMER_API AMonsterEnemy : public AEnemyCharacter
 
 public:
 	AMonsterEnemy();	
+	void Attack();
 };
