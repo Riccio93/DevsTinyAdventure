@@ -35,6 +35,7 @@ void AGEPlatformerAIController::OnSightUpdated(AActor* UpdatedActor, FAIStimulus
 	{
 		if(Stimulus.WasSuccessfullySensed())
 		{
+
 			UE_LOG(LogTemp, Warning, TEXT("Detecting!"));
 		}
 		else
