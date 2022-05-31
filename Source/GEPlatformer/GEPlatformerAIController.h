@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "Perception/AIPerceptionTypes.h"
 #include "GEPlatformerAIController.generated.h"
 
 UCLASS()
@@ -15,12 +16,20 @@ public:
 	AGEPlatformerAIController(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(transient)
-		class UBehaviorTreeComponent* BehaviorTreeComponent;
+	class UBehaviorTreeComponent* BehaviorTreeComponent;
 
 	UPROPERTY(transient)
-		class UBlackboardComponent* BlackboardComponent;
+	class UBlackboardComponent* BlackboardComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "AI")
+	class UAIPerceptionComponent* PerceptionComp;
+	UPROPERTY(transient)
+	class UAISenseConfig_Sight* SightConfig;
 
 	void OnPossess(APawn* ControlledPawn) override;
+
+	UFUNCTION()
+	void OnSightUpdated(AActor* UpdatedActor, FAIStimulus Stimulus);
 
 	//Blackboard Keys IDs
 	//int BBPatrolLocationID;
