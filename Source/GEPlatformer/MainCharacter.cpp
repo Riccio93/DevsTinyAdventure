@@ -303,6 +303,7 @@ void AMainCharacter::TakeDamage(float Value)
 	if (HealthValue <= 0)
 	{
 		//TODO: Death
+		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, "You are dead...");
 	}
 	else
 	{

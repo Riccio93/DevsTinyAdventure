@@ -12,12 +12,18 @@ AMonsterEnemy::AMonsterEnemy()
 	SkeletalMeshComponent->AddRelativeLocation(FVector(0.f, 0.f, -25.f));
 }
 
-void AMonsterEnemy::Attack()
+//Plays the attack animation montage
+float AMonsterEnemy::PlayAttacksMontage()
 {
-	//PlayMontage()
-}
+	UAnimInstance* AnimInstance = (SkeletalMeshComponent) ? SkeletalMeshComponent->GetAnimInstance() : nullptr;
+	if (AttackMontage && AnimInstance)
+	{
+		float const Duration = AnimInstance->Montage_Play(AttackMontage, 1.f);
 
-void Tick(float DeltaSeconds)
-{
-
+		if (Duration > 0.f)
+		{
+			return Duration;
+		}
+	}
+	return 0.f;
 }

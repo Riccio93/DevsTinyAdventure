@@ -9,7 +9,11 @@ class GEPLATFORMER_API AMonsterEnemy : public AEnemyCharacter
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
+	class UAnimMontage* AttackMontage;
+
 public:
 	AMonsterEnemy();	
-	void Attack();
+
+	float PlayAttacksMontage();
 };
