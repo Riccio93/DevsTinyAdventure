@@ -2,6 +2,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Math/UnrealMathUtility.h"
+#include "Components/PrimitiveComponent.h"
 //Components
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -44,7 +45,7 @@ AMainCharacter::AMainCharacter()
 	WalkMultiplier = .5f;
 	//...and Jumping defaults
 	GetCharacterMovement()->JumpZVelocity = 900.f;
-	GetCharacterMovement()->AirControl = .2f;
+	GetCharacterMovement()->AirControl = .1f;
 	JumpMaxHoldTime = .3f;
 	JumpMaxCount = 2;
 	DefaultGravity = 4.f;
@@ -53,7 +54,7 @@ AMainCharacter::AMainCharacter()
 	WallJumpForwardForce = -550.f;
 	WallJumpVerticalForce = 1300.f;
 	bResetVelocityOnce = true;
-	GetCharacterMovement()->AirControl = 1.f; //At 1 the character can use the wall jump to climb a single wall, set at 0.05 if we don't want that
+	GetCharacterMovement()->AirControl = .05f; //At 1 the character can use the wall jump to climb a single wall, set at 0.05 if we don't want that
 
 	//Get animation montages
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DoubleJumpMontageObject(TEXT("/Game/GEPlatformer/Characters/Devvy/Animations/AM_Devvy_DoubleJump.AM_Devvy_DoubleJump"));
@@ -83,14 +84,9 @@ void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	WallJumpChecks();
-
-	/*AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-	if (InGameHUD)
-	{
-		InGameHUD->UpdateHealth(HealthValue);
-	}
-	HealthValue -= 0.01f;*/
 }
+
+#pragma region Input Functions
 
 //Binds functionality to input
 void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -110,6 +106,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 }
+
+#pragma endregion
 
 #pragma region Movement Functions
 
@@ -189,7 +187,7 @@ void AMainCharacter::Jump()
 			else
 			{
 				//Normal Jump
-				ACharacter::Jump();
+				Super::Jump();
 				JumpCount++;
 			}
 		}	
@@ -207,18 +205,24 @@ void AMainCharacter::Landed(const FHitResult& Hit)
 	SetActorRotation(FRotator(0.f, 0.f, GetActorRotation().Vector().Z));
 }
 
+void AMainCharacter::EnemyKilledJump()
+{
+	Super::Jump();
+}
+
 void AMainCharacter::WallJumpChecks()
 {
 	//Movement logic for the wall jump
 	if (GetCharacterMovement()->IsFalling())
 	{
-		//Check if the player is hitting a wall, if so set the bool bIsInWallSlide
+		//Check if the player is hitting a wall suitable for wall jumps, if so set the bool bIsInWallSlide
 		TArray<AActor*> ActorsToIgnore;
 		ActorsToIgnore.Add(this);
 		FHitResult OutHit;
-		//TODO: Check here for the trace type
-		UKismetSystemLibrary::CapsuleTraceSingle(GetWorld(), GetActorLocation(), GetActorLocation(), GetCapsuleComponent()->GetUnscaledCapsuleRadius() + 1.f, GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(), TraceTypeQuery2, false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
-		bIsInWallSlide = OutHit.bBlockingHit;
+		//Trace channel with walls suitable for wall jumps
+		ETraceTypeQuery JumpWallTrace = UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_GameTraceChannel3);
+		UKismetSystemLibrary::CapsuleTraceSingle(GetWorld(), GetActorLocation(), GetActorLocation(), GetCapsuleComponent()->GetUnscaledCapsuleRadius() + 1.f, GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(), JumpWallTrace, false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
+		bIsInWallSlide = OutHit.bBlockingHit;	
 
 		if (bIsInWallSlide)
 		{
@@ -248,8 +252,6 @@ void AMainCharacter::WallJumpChecks()
 	}
 }
 
-
-
 #pragma endregion
 
 #pragma region Collision Functions
@@ -259,14 +261,8 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 	//When collecting a coin, destroy it and add a point
 	if(ACoin* HitCoin = Cast<ACoin>(OtherActor))
 	{
-		CurrentCoinsCount += 1;
-		OtherActor->Destroy();
-
-		AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-		if(InGameHUD)
-		{
-			InGameHUD->UpdateCoinsCount(CurrentCoinsCount, TotalCoinsCount);
-		}
+		AddCoinsToCounter(1);		
+		OtherActor->Destroy();		
 	}
 
 	//When the player collects all coins the game is won
@@ -275,32 +271,59 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "You win!");
 	}
 
-	//When collecting a coin, some health is recovered
+	//When collecting an heart, some health is recovered
 	if(AHeart* HitHeart = Cast<AHeart>(OtherActor))
 	{
-		HealthValue += HeartHealthRecover;
-		if(HealthValue > MaxHealthValue)
-		{
-			HealthValue = MaxHealthValue;
-		}
-		OtherActor->Destroy();
-
-		AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-		if (InGameHUD)
-		{
-			InGameHUD->UpdateHealth(HealthValue);
-		}
-	}
-
-	
+		RecoverHealth(HeartHealthRecover);
+		OtherActor->Destroy();		
+	}	
 }
 
-//
-//void AMainCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-//{
-//	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, "Overlap end function called");
-//
-//}
-//
+void AMainCharacter::AddCoinsToCounter(int coins)
+{
+	CurrentCoinsCount += coins;
+
+	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (InGameHUD)
+	{
+		InGameHUD->UpdateCoinsCount(CurrentCoinsCount, TotalCoinsCount);
+	}
+}
+
+
+
+void AMainCharacter::TakeDamage(float Value)
+{
+	HealthValue -= Value;
+	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (InGameHUD)
+	{
+		InGameHUD->UpdateHealth(HealthValue);
+	}
+	if (HealthValue <= 0)
+	{
+		//TODO: Death
+		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, "You are dead...");
+	}
+	else
+	{
+		//Blink and be indestructible for a certain amount of time??
+	}
+}
+
+void AMainCharacter::RecoverHealth(float Value)
+{
+	HealthValue += Value;
+	if (HealthValue > MaxHealthValue)
+	{
+		HealthValue = MaxHealthValue;
+	}
+
+	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (InGameHUD)
+	{
+		InGameHUD->UpdateHealth(HealthValue);
+	}
+}
 
 #pragma endregion
