@@ -100,11 +100,21 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AMainCharacter::StopSprinting);
 	PlayerInputComponent->BindAction("Walk", IE_Pressed, this, &AMainCharacter::Walk);
 	PlayerInputComponent->BindAction("Walk", IE_Released, this, &AMainCharacter::StopWalking);
+	PlayerInputComponent->BindAction("Pause", IE_Pressed, this, &AMainCharacter::OpenPauseMenuInHUD);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMainCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AMainCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+}
+
+void AMainCharacter::OpenPauseMenuInHUD()
+{
+	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (InGameHUD)
+	{
+		InGameHUD->OpenPauseMenu();
+	}
 }
 
 #pragma endregion
@@ -289,8 +299,6 @@ void AMainCharacter::AddCoinsToCounter(int coins)
 		InGameHUD->UpdateCoinsCount(CurrentCoinsCount, TotalCoinsCount);
 	}
 }
-
-
 
 void AMainCharacter::TakeDamage(float Value)
 {

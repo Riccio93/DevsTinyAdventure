@@ -3,6 +3,7 @@
 #include "GEPlatformerGameMode.h"
 #include "MainCharacter.h"
 #include "InGameHUD.h"
+#include "GEPlatformerPlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 
 AGEPlatformerGameMode::AGEPlatformerGameMode()
@@ -19,5 +20,12 @@ AGEPlatformerGameMode::AGEPlatformerGameMode()
 	if (InGameHudBPClass.Class != NULL)
 	{
 		HUDClass = InGameHudBPClass.Class;
+	}
+
+	//Set PlayerController class to our blueprinted player controller
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBPClass(TEXT("/Game/GEPlatformer/Blueprints/BP_GEPlatformerPlayerController"));
+	if (PlayerControllerBPClass.Class != NULL)
+	{
+		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 }

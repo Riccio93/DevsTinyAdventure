@@ -5,6 +5,8 @@
 
 #include "Components/WidgetComponent.h"
 #include "CoinsWidget.h"
+#include "GameStartWidget.h"
+#include "PauseMenuWidget.h"
 
 #include "InGameHUD.generated.h"
 
@@ -30,9 +32,19 @@ public:
 	UFUNCTION()
 	void UpdateHealth(float Value);
 
+	void OpenPauseMenu();
+
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
 	TSubclassOf<UUserWidget> CoinsWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+	TSubclassOf<UUserWidget> GameStartWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+	TSubclassOf<UUserWidget> PauseMenuWidgetClass;
+
 private:	
 	UCoinsWidget* CoinsWidget;
+	UGameStartWidget* GameStartWidget;
+	UPauseMenuWidget* PauseMenuWidget;
 };

@@ -16,9 +16,29 @@ void AInGameHUD::BeginPlay()
 		CoinsWidget = CreateWidget<UCoinsWidget>(GetWorld(), CoinsWidgetClass);
 		if(CoinsWidget)
 		{
-			CoinsWidget->AddToViewport();
+			CoinsWidget->AddToViewport(1);
 		}
 	}
+
+	if(GameStartWidgetClass)
+	{
+		GameStartWidget = CreateWidget<UGameStartWidget>(GetWorld(), GameStartWidgetClass);
+		if(GameStartWidget)
+		{
+			GameStartWidget->AddToViewport(2);
+		}
+	}
+
+	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
+	GetWorld()->GetFirstPlayerController()->bEnableClickEvents = true;
+	GetWorld()->GetFirstPlayerController()->bEnableMouseOverEvents = true;
+
+	if (PauseMenuWidgetClass)
+	{
+		PauseMenuWidget = CreateWidget<UPauseMenuWidget>(GetWorld(), PauseMenuWidgetClass);
+	}
+
+	//InputComponent->BindAction("Pause", IE_Pressed, this, &AInGameHUD::OpenPauseMenu);
 }
 
 void AInGameHUD::Tick(float DeltaSeconds)
@@ -46,5 +66,16 @@ void AInGameHUD::UpdateHealth(float Value)
 	if(CoinsWidget)
 	{
 		CoinsWidget->UpdateHealthBar(Value);
+	}
+}
+
+void AInGameHUD::OpenPauseMenu()
+{
+	if (PauseMenuWidget)
+	{
+		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
+		GetWorld()->GetFirstPlayerController()->bEnableClickEvents = true;
+		GetWorld()->GetFirstPlayerController()->bEnableMouseOverEvents = true;
+		PauseMenuWidget->AddToViewport(3);
 	}
 }

@@ -18,12 +18,10 @@ void UMainMenuWidget::NativeConstruct()
 
 void UMainMenuWidget::QuitGame()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Exiting the game..."));
 	UKismetSystemLibrary::QuitGame(GetWorld(), GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);
 }
 
 void UMainMenuWidget::PlayGame()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Playing the game!"));
 	UGameplayStatics::OpenLevel((UObject*)GetGameInstance(), FName(TEXT("MainLevel")));
 }
