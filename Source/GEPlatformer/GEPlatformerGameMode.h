@@ -17,10 +17,14 @@ class AGEPlatformerGameMode : public AGameModeBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Game", meta = (AllowPrivateAccess = "true"))
 	int TotalCoinsCount;
 
+	UPROPERTY(VisibleAnywhere, Category = "Game", meta = (AllowPrivateAccess = "true"))
+	float GameTime;
+
 public:
 	AGEPlatformerGameMode();
 	void UpdateCoins(int Value);
 	int GetTotalCoinsCount();
+	float GetGameTime();
 };
 
 

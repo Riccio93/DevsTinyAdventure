@@ -10,7 +10,16 @@ class GEPLATFORMER_API UGameOverWidget : public UUserWidget
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* RestartButton;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* BackButton;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* GameOverScoreText;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* GameOverTimeText;
 	
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* YouLoseTitle;
@@ -24,4 +33,10 @@ public:
 	virtual void NativeConstruct() override;
 
 	void SetElements(bool bIsGameWon);
+
+	UFUNCTION()
+	void RestartGame();
+
+	UFUNCTION()
+	void ToMenu();
 };

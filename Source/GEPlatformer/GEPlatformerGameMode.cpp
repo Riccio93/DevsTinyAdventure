@@ -58,3 +58,9 @@ int AGEPlatformerGameMode::GetTotalCoinsCount()
 {
 	return TotalCoinsCount;
 }
+
+float AGEPlatformerGameMode::GetGameTime()
+{
+	GameTime = GetGameTimeSinceCreation();
+	return GameTime;
+}
