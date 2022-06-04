@@ -15,8 +15,8 @@ void UGameStartWidget::NativeConstruct()
 
 void UGameStartWidget::BeginGame()
 {
+	GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeGameOnly());
+	GetWorld()->GetFirstPlayerController()->SetPause(false);
 	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
-	GetWorld()->GetFirstPlayerController()->bEnableClickEvents = false;
-	GetWorld()->GetFirstPlayerController()->bEnableMouseOverEvents = false;
-	RemoveFromParent();
+	RemoveFromViewport();
 }

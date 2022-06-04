@@ -28,17 +28,14 @@ void AInGameHUD::BeginPlay()
 			GameStartWidget->AddToViewport(2);
 		}
 	}
-
+	GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeUIOnly());
+	GetWorld()->GetFirstPlayerController()->SetPause(true);
 	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
-	GetWorld()->GetFirstPlayerController()->bEnableClickEvents = true;
-	GetWorld()->GetFirstPlayerController()->bEnableMouseOverEvents = true;
 
 	if (PauseMenuWidgetClass)
 	{
 		PauseMenuWidget = CreateWidget<UPauseMenuWidget>(GetWorld(), PauseMenuWidgetClass);
 	}
-
-	//InputComponent->BindAction("Pause", IE_Pressed, this, &AInGameHUD::OpenPauseMenu);
 }
 
 void AInGameHUD::Tick(float DeltaSeconds)
@@ -71,11 +68,11 @@ void AInGameHUD::UpdateHealth(float Value)
 
 void AInGameHUD::OpenPauseMenu()
 {
-	if (PauseMenuWidget)
+	if (PauseMenuWidget && !GameStartWidget->IsInViewport())
 	{
+		GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeUIOnly());
+		GetWorld()->GetFirstPlayerController()->SetPause(true);
 		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
-		GetWorld()->GetFirstPlayerController()->bEnableClickEvents = true;
-		GetWorld()->GetFirstPlayerController()->bEnableMouseOverEvents = true;
 		PauseMenuWidget->AddToViewport(3);
 	}
 }

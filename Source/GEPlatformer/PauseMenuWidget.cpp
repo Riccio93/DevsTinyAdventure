@@ -2,6 +2,7 @@
 
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
+#include "MainCharacter.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 
 UPauseMenuWidget::UPauseMenuWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -10,18 +11,18 @@ UPauseMenuWidget::UPauseMenuWidget(const FObjectInitializer& ObjectInitializer) 
 void UPauseMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	//BeginButton->OnClicked.AddDynamic(this, &UGameStartWidget::BeginGame);
-	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMainCharacter::Jump);
 	ExitButton->OnClicked.AddDynamic(this, &UPauseMenuWidget::BackToMenu);
 	ResumeButton->OnClicked.AddDynamic(this, &UPauseMenuWidget::ClosePauseMenu);
 }
 
 void UPauseMenuWidget::ClosePauseMenu()
 {
+	GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeGameOnly());
+	GetWorld()->GetFirstPlayerController()->SetPause(false);
 	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
-	GetWorld()->GetFirstPlayerController()->bEnableClickEvents = false;
-	GetWorld()->GetFirstPlayerController()->bEnableMouseOverEvents = false;
-	RemoveFromParent();
+	RemoveFromViewport();
+	ExitButton->OnClicked.RemoveDynamic(this, &UPauseMenuWidget::BackToMenu);
+	ResumeButton->OnClicked.RemoveDynamic(this, &UPauseMenuWidget::ClosePauseMenu);
 }
 
 void UPauseMenuWidget::BackToMenu()
