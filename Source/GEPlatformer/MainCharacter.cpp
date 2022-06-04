@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 //My Classes
 #include "InGameHUD.h"
+#include "GEPlatformerGameMode.h"
 #include "Coin.h"
 #include "Heart.h"
 
@@ -74,9 +75,10 @@ void AMainCharacter::BeginPlay()
 
 	//Initializes values of the coins/health UI widget
 	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-	if (InGameHUD)
+	AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
+	if (InGameHUD && GEPGameMode)
 	{
-		InGameHUD->InitializeValues(TotalCoinsCount);
+		InGameHUD->InitializeValues(GEPGameMode->GetTotalCoinsCount());
 	}
 }
 
@@ -272,8 +274,12 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 	//When collecting a coin, destroy it and add a point
 	if(ACoin* HitCoin = Cast<ACoin>(OtherActor))
 	{
-		AddCoinsToCounter(1);		
-		OtherActor->Destroy();		
+		AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
+		if(GEPGameMode)
+		{
+			GEPGameMode->UpdateCoins(1);
+		}		
+		OtherActor->Destroy();
 	}
 
 	//When the player collects all coins the game is won
@@ -288,17 +294,6 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		RecoverHealth(HeartHealthRecover);
 		OtherActor->Destroy();		
 	}	
-}
-
-void AMainCharacter::AddCoinsToCounter(int coins)
-{
-	CurrentCoinsCount += coins;
-
-	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-	if (InGameHUD)
-	{
-		InGameHUD->UpdateCoinsCount(CurrentCoinsCount, TotalCoinsCount);
-	}
 }
 
 void AMainCharacter::TakeDamage(float Value)

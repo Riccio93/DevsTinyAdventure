@@ -36,6 +36,11 @@ void AInGameHUD::BeginPlay()
 	{
 		PauseMenuWidget = CreateWidget<UPauseMenuWidget>(GetWorld(), PauseMenuWidgetClass);
 	}
+
+	if (GameOverWidgetClass)
+	{
+		GameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(), GameOverWidgetClass);
+	}
 }
 
 void AInGameHUD::Tick(float DeltaSeconds)
@@ -47,7 +52,7 @@ void AInGameHUD::Tick(float DeltaSeconds)
 void AInGameHUD::InitializeValues(int totalCoinsCount)
 {
 	UpdateCoinsCount(0, totalCoinsCount);
-	UpdateHealth(.5f); //TODO: Set to 1 when testing is done
+	UpdateHealth(1.f);
 }
 
 void AInGameHUD::UpdateCoinsCount(int Value, int Total)
@@ -74,5 +79,17 @@ void AInGameHUD::OpenPauseMenu()
 		GetWorld()->GetFirstPlayerController()->SetPause(true);
 		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
 		PauseMenuWidget->AddToViewport(3);
+	}
+}
+
+void AInGameHUD::ShowGameOverScreen(int bIsGameWon)
+{
+	if(GameOverWidget)
+	{
+		GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeUIOnly());
+		GetWorld()->GetFirstPlayerController()->SetPause(true);
+		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
+		GameOverWidget->SetElements(true);
+		GameOverWidget->AddToViewport(3);
 	}
 }

@@ -28,4 +28,33 @@ AGEPlatformerGameMode::AGEPlatformerGameMode()
 	{
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
+
+	CoinsCount = 0;
+	TotalCoinsCount = 100;
+}
+
+void AGEPlatformerGameMode::UpdateCoins(int Value)
+{
+	//DEBUG, GIVES 100 COINS
+	CoinsCount += (Value * 100);
+
+	//Update coins value on the HUD
+	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (InGameHUD)
+	{
+		InGameHUD->UpdateCoinsCount(CoinsCount, TotalCoinsCount);
+	}
+
+	if(CoinsCount >= TotalCoinsCount)
+	{
+		if(InGameHUD)
+		{
+			InGameHUD->ShowGameOverScreen(true);
+		}
+	}
+}
+
+int AGEPlatformerGameMode::GetTotalCoinsCount()
+{
+	return TotalCoinsCount;
 }
