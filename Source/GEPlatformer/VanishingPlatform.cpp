@@ -17,6 +17,9 @@ void AVanishingPlatform::BeginPlay()
 {
 	Super::BeginPlay();
 	SMeshComponent->OnComponentHit.AddDynamic(this, &AVanishingPlatform::OnHit);
+
+	OriginalLocation = GetActorLocation();
+	OriginalRotation = GetActorRotation();
 }
 
 void AVanishingPlatform::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -25,11 +28,22 @@ void AVanishingPlatform::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherA
 	{
 		UE_LOG(LogTemp, Warning, TEXT("In ONHIT"));
 		FTimerHandle TimerHandle;
-		GetWorldTimerManager().SetTimer(TimerHandle, this, &AVanishingPlatform::SelfDestruct, 1.f, false, DestroyTime);
+		GetWorldTimerManager().SetTimer(TimerHandle, this, &AVanishingPlatform::PlatformFall, 1.f, false, DestroyTime);
 	}	
 }
 
-void AVanishingPlatform::SelfDestruct()
+void AVanishingPlatform::PlatformFall()
 {
-	Destroy();
+	SMeshComponent->SetSimulatePhysics(true);
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AVanishingPlatform::RespawnPlatform, 1.f, false, DestroyTime * 4);
+	//Destroy();
+}
+
+void AVanishingPlatform::RespawnPlatform()
+{
+	SMeshComponent->SetSimulatePhysics(false);
+	SetActorLocation(OriginalLocation);
+	SetActorRotation(OriginalRotation);
+	//SMeshComponent->SetRelativeRotation(OriginalRotation);
 }

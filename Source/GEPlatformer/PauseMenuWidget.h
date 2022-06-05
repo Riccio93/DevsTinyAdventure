@@ -8,6 +8,9 @@ UCLASS()
 class GEPLATFORMER_API UPauseMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	class USoundWave* ClickSound;
 	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (BindWidget))

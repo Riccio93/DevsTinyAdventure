@@ -30,4 +30,7 @@ public:
 private:
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* CoinObtainedAnimation;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	UWidgetAnimation* HealthObtainedAnimation;
 };

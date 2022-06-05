@@ -76,9 +76,17 @@ AMainCharacter::AMainCharacter()
 	if (JumpSoundCueObject.Succeeded())
 		JumpSoundCue = JumpSoundCueObject.Object;
 
-	static ConstructorHelpers::FObjectFinder<USoundCue> HeartSoundCueObject(TEXT("SoundCue'/Game/GEPlatformer/Audio/A_Heart_Cue.A_Heart_Cue'"));
+	static ConstructorHelpers::FObjectFinder<USoundCue> HeartSoundCueObject(TEXT("SoundCue'/Game/GEPlatformer/Audio/A_Heart2_Cue.A_Heart2_Cue'"));
 	if (HeartSoundCueObject.Succeeded())
 		HeartSoundCue = HeartSoundCueObject.Object;
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> EnemyDeathSoundCueObject(TEXT("SoundCue'/Game/GEPlatformer/Audio/A_EnemyDeath_Cue.A_EnemyDeath_Cue'"));
+	if (EnemyDeathSoundCueObject.Succeeded())
+		EnemyDeathSoundCue = EnemyDeathSoundCueObject.Object;
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> TakeDamageSoundCueObject(TEXT("SoundCue'/Game/GEPlatformer/Audio/A_TakeDamage_Cue.A_TakeDamage_Cue'"));
+	if (TakeDamageSoundCueObject.Succeeded())
+		TakeDamageSoundCue = TakeDamageSoundCueObject.Object;
 
 	/*CurrentCoinsCount = 0;
 	TotalCoinsCount = 5;
@@ -202,6 +210,7 @@ void AMainCharacter::Jump()
 		ACharacter::PlayAnimMontage(DoubleJumpMontage, 1, NAME_None);
 		GetCharacterMovement()->Velocity.Z = 0;
 		LaunchCharacter((GetActorForwardVector() * WallJumpForwardForce) + FVector(0.f, 0.f, WallJumpVerticalForce), true, true);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), JumpSoundCue, GetActorLocation(), 1.f);
 	}
 	else
 	{
@@ -221,9 +230,9 @@ void AMainCharacter::Jump()
 				Super::Jump();
 				JumpCount++;
 			}
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), JumpSoundCue, GetActorLocation(), 1.f);
 		}	
 	}
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), JumpSoundCue, GetActorLocation(), 1.f);
 }
 
 //Reset everything when touching the ground after a jump (normal, double or wall jump)
@@ -240,7 +249,7 @@ void AMainCharacter::Landed(const FHitResult& Hit)
 void AMainCharacter::EnemyKilledJump()
 {
 	Super::Jump();
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), JumpSoundCue, GetActorLocation(), 1.f);
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), EnemyDeathSoundCue, GetActorLocation(), 1.f);
 }
 
 void AMainCharacter::WallJumpChecks()
@@ -309,12 +318,6 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		OtherActor->Destroy();
 	}
 
-	////When the player collects all coins the game is won
-	//if(CurrentCoinsCount == TotalCoinsCount)
-	//{
-	//	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "You win!");
-	//}
-
 	//When collecting an heart, some health is recovered
 	if(AHeart* HitHeart = Cast<AHeart>(OtherActor))
 	{
@@ -323,30 +326,31 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		{
 			GEPGameMode->UpdateHealth(GEPGameMode->HeartHealthRecover);
 		}
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), HeartSoundCue, HitHeart->GetActorLocation(), 3.f);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), HeartSoundCue, HitHeart->GetActorLocation(), 4.f);
 		OtherActor->Destroy();	
 	}	
 }
 
 void AMainCharacter::TakeDamage(float Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("The float value is: %f"), Value);
 	AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
 	if(GEPGameMode)
 	{
 		GEPGameMode->UpdateHealth(-Value);
 	}
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), TakeDamageSoundCue, GetActorLocation(), 1.f);
+
 
 	//TODO: Blink and be indestructible for a certain amount of time??
 }
 
-void AMainCharacter::RecoverHealth(float Value)
-{
-	AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
-	if (GEPGameMode)
-	{
-		GEPGameMode->UpdateHealth(Value);
-	}
-}
+//void AMainCharacter::RecoverHealth(float Value)
+//{
+//	AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
+//	if (GEPGameMode)
+//	{
+//		GEPGameMode->UpdateHealth(Value);
+//	}
+//}
 
 #pragma endregion

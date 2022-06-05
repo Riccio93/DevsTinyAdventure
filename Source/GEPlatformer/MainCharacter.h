@@ -73,6 +73,12 @@ class GEPLATFORMER_API AMainCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
 	class USoundCue* HeartSoundCue;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	class USoundCue* EnemyDeathSoundCue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	class USoundCue* TakeDamageSoundCue;
+
 public:
 	AMainCharacter();
 

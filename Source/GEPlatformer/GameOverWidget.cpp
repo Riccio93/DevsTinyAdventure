@@ -7,7 +7,8 @@
 #include "Kismet/GameplayStatics.h"
 
 UGameOverWidget::UGameOverWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
-{}
+{
+}
 
 void UGameOverWidget::NativeConstruct()
 {
