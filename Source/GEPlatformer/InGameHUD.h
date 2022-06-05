@@ -35,7 +35,7 @@ public:
 
 	void OpenPauseMenu();
 
-	void ShowGameOverScreen(int bIsGameWon);
+	void ShowGameOverScreen(bool bIsGameWon);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
 	TSubclassOf<UUserWidget> CoinsWidgetClass;

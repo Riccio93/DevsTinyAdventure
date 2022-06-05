@@ -9,6 +9,9 @@ class GEPLATFORMER_API UEnemyAttack : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float AttackDamage;
+
 public:
 	UEnemyAttack(FObjectInitializer const& ObjectInitializer);
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

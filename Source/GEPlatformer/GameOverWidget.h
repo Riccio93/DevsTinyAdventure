@@ -32,7 +32,7 @@ public:
 
 	virtual void NativeConstruct() override;
 
-	void SetElements(bool bIsGameWon);
+	void InitializeWidgetElements(bool bIsGameWon);
 
 	UFUNCTION()
 	void RestartGame();

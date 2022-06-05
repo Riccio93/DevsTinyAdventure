@@ -57,7 +57,6 @@ void AEnemyCharacter::OnBoxOverlapBegin(class UPrimitiveComponent* OverlappedCom
 			{
 				GEPGameMode->UpdateCoins(CoinsGivenToPlayer);
 			}
-			//MainCharacter->AddCoinsToCounter(CoinsGivenToPlayer);
 		}		
 	}
 }

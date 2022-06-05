@@ -42,7 +42,7 @@ class GEPLATFORMER_API AMainCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
 	float WallSlideDeceleration;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	float HealthValue;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
@@ -52,10 +52,10 @@ class GEPLATFORMER_API AMainCharacter : public ACharacter
 	int CurrentCoinsCount;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
-	int TotalCoinsCount;
+	int TotalCoinsCount;*/
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
-	float HeartHealthRecover;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
+	float HeartHealthRecover;*/
 
 	bool bResetVelocityOnce;
 	float DefaultWalkSpeed;

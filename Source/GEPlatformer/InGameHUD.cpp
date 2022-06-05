@@ -82,14 +82,14 @@ void AInGameHUD::OpenPauseMenu()
 	}
 }
 
-void AInGameHUD::ShowGameOverScreen(int bIsGameWon)
+void AInGameHUD::ShowGameOverScreen(bool bIsGameWon)
 {
 	if(GameOverWidget)
 	{
 		GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeUIOnly());
 		GetWorld()->GetFirstPlayerController()->SetPause(true);
 		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
-		GameOverWidget->SetElements(true);
+		GameOverWidget->InitializeWidgetElements(bIsGameWon);
 		GameOverWidget->AddToViewport(3);
 	}
 }

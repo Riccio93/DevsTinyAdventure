@@ -16,33 +16,38 @@ void UGameOverWidget::NativeConstruct()
 	BackButton->OnClicked.AddDynamic(this, &UGameOverWidget::ToMenu);	
 }
 
-void UGameOverWidget::SetElements(bool bIsGameWon)
+void UGameOverWidget::InitializeWidgetElements(bool bIsGameWon)
 {
 	AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
 	if (GEPGameMode)
 	{
-		if(bIsGameWon)
+		GameOverScoreText->SetText(FText::FromString(FString::FromInt(GEPGameMode->GetTotalCoinsCount()) +
+			"/" + FString::FromInt(GEPGameMode->GetTotalCoinsCount())));
+
+		int GameTimeMinutes = (int)GEPGameMode->GetGameTime() / 60;
+		int GameTimeSeconds = (int)GEPGameMode->GetGameTime() % 60;
+
+		if (GameTimeMinutes >= 60)
+			GameOverTimeText->SetText(FText::FromString("59 minutes\n59 seconds"));
+		else
+			GameOverTimeText->SetText(FText::FromString(FString::FromInt(GameTimeMinutes) + " minutes\n" + (FString::FromInt(GameTimeSeconds)) + " seconds"));
+
+		if (bIsGameWon)
 		{
-			GameOverScoreText->SetText(FText::FromString(FString::FromInt(GEPGameMode->GetTotalCoinsCount()) + 
-				"/" + FString::FromInt(GEPGameMode->GetTotalCoinsCount())));
-			
-			YouLoseTitle->SetVisibility(ESlateVisibility::Hidden);
 			YouWinTitle->SetVisibility(ESlateVisibility::Visible);
-
-			int GameTimeMinutes = (int)GEPGameMode->GetGameTime() / 60;
-			int GameTimeSeconds = (int)GEPGameMode->GetGameTime() % 60;
-
-			if(GameTimeMinutes >= 60)
-				GameOverTimeText->SetText(FText::FromString("59 minutes\n59 seconds"));
-			else
-				GameOverTimeText->SetText(FText::FromString(FString::FromInt(GameTimeMinutes) + " minutes\n" + (FString::FromInt(GameTimeSeconds)) + " seconds"));
+			YouLoseTitle->SetVisibility(ESlateVisibility::Hidden);
+		}
+		else
+		{
+			YouWinTitle->SetVisibility(ESlateVisibility::Hidden);
+			YouLoseTitle->SetVisibility(ESlateVisibility::Visible);
 		}
 	}
 }
 
 void UGameOverWidget::RestartGame()
 {
-	UGameplayStatics::OpenLevel((UObject*)GetGameInstance(), FName(TEXT("MainLevel")));
+	UGameplayStatics::OpenLevel((UObject*)GetGameInstance(), FName(*GetWorld()->GetName()), false);
 }
 
 

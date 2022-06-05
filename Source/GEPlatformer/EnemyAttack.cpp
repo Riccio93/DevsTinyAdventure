@@ -7,6 +7,7 @@
 UEnemyAttack::UEnemyAttack(FObjectInitializer const& ObjectInitializer)
 {
 	NodeName = TEXT("Enemy Attack");
+	AttackDamage = .25f;
 }
 
 EBTNodeResult::Type UEnemyAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -23,7 +24,7 @@ EBTNodeResult::Type UEnemyAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp,
 
 		if (AMainCharacter* MC = Cast<AMainCharacter>(AttackedObject))
 		{
-			MC->TakeDamage(0.25f);
+			MC->TakeDamage(AttackDamage);
 		}
 	}
 
