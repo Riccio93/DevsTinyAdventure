@@ -1,6 +1,7 @@
 #include "MainCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "Math/UnrealMathUtility.h"
 #include "Components/PrimitiveComponent.h"
 //Components
@@ -13,6 +14,8 @@
 #include "GEPlatformerGameMode.h"
 #include "Coin.h"
 #include "Heart.h"
+
+#include "Sound/SoundCue.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -28,7 +31,9 @@ AMainCharacter::AMainCharacter()
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
 	SpringArmComponent->SetupAttachment(RootComponent);
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
-	CameraComponent->AttachToComponent(SpringArmComponent, FAttachmentTransformRules::KeepRelativeTransform);	
+	CameraComponent->AttachToComponent(SpringArmComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>("AudioComponent");
+	AudioComponent->SetupAttachment(RootComponent);
 	
 	//Configure Spring arm's defaults
 	SpringArmComponent->bUsePawnControlRotation = true;
@@ -61,6 +66,19 @@ AMainCharacter::AMainCharacter()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DoubleJumpMontageObject(TEXT("/Game/GEPlatformer/Characters/Devvy/Animations/AM_Devvy_DoubleJump.AM_Devvy_DoubleJump"));
 	if(DoubleJumpMontageObject.Succeeded())
 		DoubleJumpMontage = DoubleJumpMontageObject.Object;
+
+	//Get audio files
+	static ConstructorHelpers::FObjectFinder<USoundCue> CoinSoundCueObject(TEXT("SoundCue'/Game/GEPlatformer/Audio/A_Coin_Cue.A_Coin_Cue'"));
+	if (CoinSoundCueObject.Succeeded())
+		CoinSoundCue = CoinSoundCueObject.Object;
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> JumpSoundCueObject(TEXT("SoundCue'/Game/GEPlatformer/Audio/A_Jump_Cue.A_Jump_Cue'"));
+	if (JumpSoundCueObject.Succeeded())
+		JumpSoundCue = JumpSoundCueObject.Object;
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> HeartSoundCueObject(TEXT("SoundCue'/Game/GEPlatformer/Audio/A_Heart_Cue.A_Heart_Cue'"));
+	if (HeartSoundCueObject.Succeeded())
+		HeartSoundCue = HeartSoundCueObject.Object;
 
 	/*CurrentCoinsCount = 0;
 	TotalCoinsCount = 5;
@@ -204,7 +222,8 @@ void AMainCharacter::Jump()
 				JumpCount++;
 			}
 		}	
-	}	
+	}
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), JumpSoundCue, GetActorLocation(), 1.f);
 }
 
 //Reset everything when touching the ground after a jump (normal, double or wall jump)
@@ -221,6 +240,7 @@ void AMainCharacter::Landed(const FHitResult& Hit)
 void AMainCharacter::EnemyKilledJump()
 {
 	Super::Jump();
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), JumpSoundCue, GetActorLocation(), 1.f);
 }
 
 void AMainCharacter::WallJumpChecks()
@@ -284,7 +304,8 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		if(GEPGameMode)
 		{
 			GEPGameMode->UpdateCoins(1);
-		}		
+		}
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), CoinSoundCue, HitCoin->GetActorLocation(), 1.f);
 		OtherActor->Destroy();
 	}
 
@@ -302,6 +323,7 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		{
 			GEPGameMode->UpdateHealth(GEPGameMode->HeartHealthRecover);
 		}
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), HeartSoundCue, HitHeart->GetActorLocation(), 3.f);
 		OtherActor->Destroy();	
 	}	
 }

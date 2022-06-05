@@ -15,6 +15,9 @@ class GEPLATFORMER_API AMainCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* CameraComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Audio", meta = (AllowPrivateAccess = "true"))
+	class UAudioComponent* AudioComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, meta = (AllowPrivateAccess = "true"))
 	float WalkMultiplier;
 
@@ -60,6 +63,15 @@ class GEPLATFORMER_API AMainCharacter : public ACharacter
 	bool bResetVelocityOnce;
 	float DefaultWalkSpeed;
 	UAnimMontage* DoubleJumpMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	class USoundCue* CoinSoundCue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	class USoundCue* JumpSoundCue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	class USoundCue* HeartSoundCue;
 
 public:
 	AMainCharacter();

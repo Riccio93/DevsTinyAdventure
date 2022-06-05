@@ -13,9 +13,6 @@ class GEPLATFORMER_API AVanishingPlatform : public AActor
 	class UStaticMeshComponent* SMeshComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Platform, meta = (AllowPrivateAccess = "true"))
-	class UBoxComponent* BoxComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Platform, meta = (AllowPrivateAccess = "true"))
 	float DestroyTime;
 	
 public:	

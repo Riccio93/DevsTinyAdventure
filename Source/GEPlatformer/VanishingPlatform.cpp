@@ -5,13 +5,10 @@
 
 AVanishingPlatform::AVanishingPlatform()
 {
-	PrimaryActorTick.bCanEverTick = true;
-
-	BoxComponent = CreateDefaultSubobject<UBoxComponent>("BoxComponent");
-	BoxComponent->SetupAttachment(RootComponent);
+	PrimaryActorTick.bCanEverTick = false;
 
 	SMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("SMesh");
-	SMeshComponent->AttachToComponent(BoxComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	SMeshComponent->SetupAttachment(RootComponent);
 
 	DestroyTime = 1.5f;
 }
