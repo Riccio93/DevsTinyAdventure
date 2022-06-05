@@ -30,7 +30,7 @@ AGEPlatformerGameMode::AGEPlatformerGameMode()
 	}
 
 	CoinsCount = 0;
-	TotalCoinsCount = 10;
+	TotalCoinsCount = 150;
 	HealthValue = 1.f;
 	MaxHealthValue = 1.f;
 	HeartHealthRecover = .25f;
@@ -38,7 +38,6 @@ AGEPlatformerGameMode::AGEPlatformerGameMode()
 
 void AGEPlatformerGameMode::UpdateCoins(int Value)
 {
-	//DEBUG, GIVES 100 COINS
 	CoinsCount += (Value);
 
 	//Update coins value on the HUD
