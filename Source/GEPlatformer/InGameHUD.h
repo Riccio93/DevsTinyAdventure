@@ -5,6 +5,9 @@
 
 #include "Components/WidgetComponent.h"
 #include "CoinsWidget.h"
+#include "GameStartWidget.h"
+#include "PauseMenuWidget.h"
+#include "GameOverWidget.h"
 
 #include "InGameHUD.generated.h"
 
@@ -30,9 +33,25 @@ public:
 	UFUNCTION()
 	void UpdateHealth(float Value);
 
+	void OpenPauseMenu();
+
+	void ShowGameOverScreen(bool bIsGameWon);
+
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
 	TSubclassOf<UUserWidget> CoinsWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+	TSubclassOf<UUserWidget> GameStartWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+	TSubclassOf<UUserWidget> PauseMenuWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+	TSubclassOf<UUserWidget> GameOverWidgetClass;
+
 private:	
 	UCoinsWidget* CoinsWidget;
+	UGameStartWidget* GameStartWidget;
+	UPauseMenuWidget* PauseMenuWidget;
+	UGameOverWidget* GameOverWidget;
 };

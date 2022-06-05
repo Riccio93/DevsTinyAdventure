@@ -3,6 +3,7 @@
 #include "Components/BoxComponent.h"
 
 #include "MainCharacter.h"
+#include "GEPlatformerGameMode.h"
 
 
 // Sets default values
@@ -52,7 +53,10 @@ void AEnemyCharacter::OnBoxOverlapBegin(class UPrimitiveComponent* OverlappedCom
 		{
 			this->Destroy();
 			MainCharacter->EnemyKilledJump();
-			MainCharacter->AddCoinsToCounter(CoinsGivenToPlayer);
+			if(AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode()))
+			{
+				GEPGameMode->UpdateCoins(CoinsGivenToPlayer);
+			}
 		}		
 	}
 }

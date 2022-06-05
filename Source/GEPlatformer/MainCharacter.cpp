@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 //My Classes
 #include "InGameHUD.h"
+#include "GEPlatformerGameMode.h"
 #include "Coin.h"
 #include "Heart.h"
 
@@ -61,11 +62,11 @@ AMainCharacter::AMainCharacter()
 	if(DoubleJumpMontageObject.Succeeded())
 		DoubleJumpMontage = DoubleJumpMontageObject.Object;
 
-	CurrentCoinsCount = 0;
+	/*CurrentCoinsCount = 0;
 	TotalCoinsCount = 5;
 	MaxHealthValue = 1.f;
-	HealthValue = .5f;
-	HeartHealthRecover = .25f;
+	HealthValue = .5f;*/
+	//HeartHealthRecover = .25f;
 }
 
 void AMainCharacter::BeginPlay()
@@ -74,9 +75,10 @@ void AMainCharacter::BeginPlay()
 
 	//Initializes values of the coins/health UI widget
 	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-	if (InGameHUD)
+	AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
+	if (InGameHUD && GEPGameMode)
 	{
-		InGameHUD->InitializeValues(TotalCoinsCount);
+		InGameHUD->InitializeValues(GEPGameMode->GetTotalCoinsCount());
 	}
 }
 
@@ -100,11 +102,22 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AMainCharacter::StopSprinting);
 	PlayerInputComponent->BindAction("Walk", IE_Pressed, this, &AMainCharacter::Walk);
 	PlayerInputComponent->BindAction("Walk", IE_Released, this, &AMainCharacter::StopWalking);
+	PlayerInputComponent->BindAction("Pause", IE_Pressed, this, &AMainCharacter::OpenPauseMenuInHUD);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMainCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AMainCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+}
+
+//Function that opens the pause menu using the ESC key
+void AMainCharacter::OpenPauseMenuInHUD()
+{
+	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (InGameHUD)
+	{
+		InGameHUD->OpenPauseMenu();
+	}
 }
 
 #pragma endregion
@@ -258,71 +271,59 @@ void AMainCharacter::WallJumpChecks()
 
 void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if(OtherActor->ActorHasTag("KillPlane"))
+	{
+		AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
+		TakeDamage(GEPGameMode->MaxHealthValue);
+	}
+
 	//When collecting a coin, destroy it and add a point
 	if(ACoin* HitCoin = Cast<ACoin>(OtherActor))
 	{
-		AddCoinsToCounter(1);		
-		OtherActor->Destroy();		
+		AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
+		if(GEPGameMode)
+		{
+			GEPGameMode->UpdateCoins(1);
+		}		
+		OtherActor->Destroy();
 	}
 
-	//When the player collects all coins the game is won
-	if(CurrentCoinsCount == TotalCoinsCount)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "You win!");
-	}
+	////When the player collects all coins the game is won
+	//if(CurrentCoinsCount == TotalCoinsCount)
+	//{
+	//	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, "You win!");
+	//}
 
 	//When collecting an heart, some health is recovered
 	if(AHeart* HitHeart = Cast<AHeart>(OtherActor))
 	{
-		RecoverHealth(HeartHealthRecover);
-		OtherActor->Destroy();		
+		AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
+		if (GEPGameMode)
+		{
+			GEPGameMode->UpdateHealth(GEPGameMode->HeartHealthRecover);
+		}
+		OtherActor->Destroy();	
 	}	
 }
 
-void AMainCharacter::AddCoinsToCounter(int coins)
-{
-	CurrentCoinsCount += coins;
-
-	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-	if (InGameHUD)
-	{
-		InGameHUD->UpdateCoinsCount(CurrentCoinsCount, TotalCoinsCount);
-	}
-}
-
-
-
 void AMainCharacter::TakeDamage(float Value)
 {
-	HealthValue -= Value;
-	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-	if (InGameHUD)
+	UE_LOG(LogTemp, Warning, TEXT("The float value is: %f"), Value);
+	AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
+	if(GEPGameMode)
 	{
-		InGameHUD->UpdateHealth(HealthValue);
+		GEPGameMode->UpdateHealth(-Value);
 	}
-	if (HealthValue <= 0)
-	{
-		//TODO: Death
-		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, "You are dead...");
-	}
-	else
-	{
-		//Blink and be indestructible for a certain amount of time??
-	}
+
+	//TODO: Blink and be indestructible for a certain amount of time??
 }
 
 void AMainCharacter::RecoverHealth(float Value)
 {
-	HealthValue += Value;
-	if (HealthValue > MaxHealthValue)
+	AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
+	if (GEPGameMode)
 	{
-		HealthValue = MaxHealthValue;
-	}
-
-	AInGameHUD* InGameHUD = Cast<AInGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-	if (InGameHUD)
-	{
-		InGameHUD->UpdateHealth(HealthValue);
+		GEPGameMode->UpdateHealth(Value);
 	}
 }
 
