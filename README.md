@@ -1,126 +1,46 @@
-# GitLab
+# Dev's Little Adventure
 
-## Canonical source
+## Description
 
-The canonical source of GitLab where all development takes place is [hosted on GitLab.com](https://gitlab.com/gitlab-org/gitlab).
+In the game you play as Dev in his quest to obtain all the 150 coins scattered through the level.
+Coins can be collected from both actual coins in the map and by defeating enemies.
 
-If you wish to clone a copy of GitLab without proprietary code, you can use the read-only mirror of GitLab located at https://gitlab.com/gitlab-org/gitlab-foss/. However, please do not submit any issues and/or merge requests to that project.
+## Features and mechanics
 
-## Free trial
+### Buttons
 
-You can request a free trial of GitLab Ultimate [on our website](https://about.gitlab.com/free-trial/).
+- WASD - Movement
+- SPACE - Jump, Double Jump and Wall Jump
+- SHIFT - Sprint
+- CTRL - Walk Slowly (handy for enemies!)
+- ESC - Pause Menu
+- Mouse - Navigate menus
 
-## Open source software to collaborate on code
+### Dev's capabilities
 
-To see how GitLab looks please see the [features page on our website](https://about.gitlab.com/features/).
+- Jump and double jump
+- WallJump on red brick walls
+- Adjust his speed by sprinting and walking slowly
 
-- Manage Git repositories with fine grained access controls that keep your code secure
-- Perform code reviews and enhance collaboration with merge requests
-- Complete continuous integration (CI) and continuous deployment/delivery (CD) pipelines to build, test, and deploy your applications
-- Each project can also have an issue tracker, issue board, and a wiki
-- Used by more than 100,000 organizations, GitLab is the most popular solution to manage Git repositories on-premises
-- Completely free and open source (MIT Expat license)
+### Mechanics
 
-## Editions
+- Collect coins to obtain 1 point.
+- Jump on the head of enemies to defeat them and obtain 5 coins.
+- When Dev jumps on grey metal boxes they start falling after ~ 1 second leading Dev to certain doom if he's not fast!
+After ~ 6 seconds said platforms reappear at the original location.
+- If you find yourself at low health you can acquire one of the hearts in the level to recover a little bit of it.
+- Look out for cloud platforms, they like to move fast!
 
-There are three editions of GitLab:
+## Enemies
 
-- GitLab Community Edition (CE) is available freely under the MIT Expat license.
-- GitLab Enterprise Edition (EE) includes [extra features](https://about.gitlab.com/pricing/#compare-options) that are more useful for organizations with more than 100 users. To use EE and get official support please [become a subscriber](https://about.gitlab.com/pricing/).
-- JiHu Edition (JH) tailored specifically for the [Chinese market](https://about.gitlab.cn/).
+1. Crabs: they follow a fixed patrol path and ignore the player.
+The player takes damage if there's a collision with the body.
+2. Monsters: They patrol an area randomly and react when they see the player.
+When they are close they attack biting the player and causing damage.
+As for the crabs the player also takes damage if there's a collision with the body.
 
-## Licensing
+## Technologies
+Unreal Engine 4.27.2
 
-See the [LICENSE](LICENSE) file for licensing information as it pertains to
-files in this repository.
-
-## Hiring
-
-We are hiring developers, support people, and production engineers all the time, please see our [jobs page](https://about.gitlab.com/jobs/).
-
-## Website
-
-On [about.gitlab.com](https://about.gitlab.com/) you can find more information about:
-
-- [Subscriptions](https://about.gitlab.com/pricing/)
-- [Consultancy](https://about.gitlab.com/consultancy/)
-- [Community](https://about.gitlab.com/community/)
-- [Hosted GitLab.com](https://about.gitlab.com/gitlab-com/) use GitLab as a free service
-- [GitLab Enterprise Edition](https://about.gitlab.com/features/#enterprise) with additional features aimed at larger organizations.
-- [GitLab CI](https://about.gitlab.com/gitlab-ci/) a continuous integration (CI) server that is easy to integrate with GitLab.
-
-## Requirements
-
-Please see the [requirements documentation](doc/install/requirements.md) for system requirements and more information about the supported operating systems.
-
-## Installation
-
-The recommended way to install GitLab is with the [Omnibus packages](https://about.gitlab.com/downloads/) on our package server.
-Compared to an installation from source, this is faster and less error prone.
-Just select your operating system, download the respective package (Debian or RPM) and install it using the system's package manager.
-
-There are various other options to install GitLab, please refer to the [installation page on the GitLab website](https://about.gitlab.com/installation/) for more information.
-
-## Contributing
-
-GitLab is an open source project and we are very happy to accept community contributions. Please refer to [Contributing to GitLab page](https://about.gitlab.com/contributing/) for more details.
-
-## Install a development environment
-
-To work on GitLab itself, we recommend setting up your development environment with [the GitLab Development Kit](https://gitlab.com/gitlab-org/gitlab-development-kit).
-If you do not use the GitLab Development Kit you need to install and configure all the dependencies yourself, this is a lot of work and error prone.
-One small thing you also have to do when installing it yourself is to copy the example development Puma configuration file:
-
-```shell
-cp config/puma.example.development.rb config/puma.rb
-```
-
-Instructions on how to start GitLab and how to run the tests can be found in the [getting started section of the GitLab Development Kit](https://gitlab.com/gitlab-org/gitlab-development-kit#getting-started).
-
-## Software stack
-
-GitLab is a Ruby on Rails application that runs on the following software:
-
-- Ubuntu/Debian/CentOS/RHEL/OpenSUSE
-- Ruby (MRI) 2.7.5
-- Git 2.33+
-- Redis 5.0+
-- PostgreSQL 12+
-
-For more information please see the [architecture](https://docs.gitlab.com/ee/development/architecture.html) and [requirements](https://docs.gitlab.com/ee/install/requirements.html) documentation.
-
-## UX design
-
-Please adhere to the [UX Guide](https://design.gitlab.com/) when creating designs and implementing code.
-
-## Third-party applications
-
-There are a lot of [third-party applications integrating with GitLab](https://about.gitlab.com/applications/). These include GUI Git clients, mobile applications and API wrappers for various languages.
-
-## GitLab release cycle
-
-For more information about the release process see the [release documentation](https://gitlab.com/gitlab-org/release-tools/blob/master/README.md).
-
-## Upgrading
-
-For upgrading information please see our [update page](https://about.gitlab.com/update/).
-
-## Documentation
-
-All documentation can be found on <https://docs.gitlab.com>.
-
-## Getting help
-
-Please see [Getting help for GitLab](https://about.gitlab.com/getting-help/) on our website for the many options to get help.
-
-## Why?
-
-[Read here](https://about.gitlab.com/why/)
-
-## Is it any good?
-
-[Yes](https://about.gitlab.com/is-it-any-good/)
-
-## Is it awesome?
-
-[These people](https://twitter.com/gitlab/followers) seem to like it.
+## Plugins
+[UE4GitPlugin]https://github.com/SRombauts/UE4GitPlugin
