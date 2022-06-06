@@ -32,8 +32,8 @@ AMainCharacter::AMainCharacter()
 	SpringArmComponent->SetupAttachment(RootComponent);
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->AttachToComponent(SpringArmComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	AudioComponent = CreateDefaultSubobject<UAudioComponent>("AudioComponent");
-	AudioComponent->SetupAttachment(RootComponent);
+	/*AudioComponent = CreateDefaultSubobject<UAudioComponent>("AudioComponent");
+	AudioComponent->SetupAttachment(RootComponent);*/
 	
 	//Configure Spring arm's defaults
 	SpringArmComponent->bUsePawnControlRotation = true;
@@ -249,7 +249,7 @@ void AMainCharacter::Landed(const FHitResult& Hit)
 void AMainCharacter::EnemyKilledJump()
 {
 	Super::Jump();
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), EnemyDeathSoundCue, GetActorLocation(), 1.f);
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), EnemyDeathSoundCue, GetActorLocation(), 2.f);
 }
 
 void AMainCharacter::WallJumpChecks()
@@ -314,7 +314,7 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		{
 			GEPGameMode->UpdateCoins(1);
 		}
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), CoinSoundCue, HitCoin->GetActorLocation(), 1.f);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), CoinSoundCue, HitCoin->GetActorLocation(), 1.5f);
 		OtherActor->Destroy();
 	}
 
