@@ -19,8 +19,8 @@ AGEPlatformerAIController::AGEPlatformerAIController(const FObjectInitializer& O
 	//AIPerception
 	PerceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception Component"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("AI Sight Config"));
-	SightConfig->SightRadius = 1200.f;
-	SightConfig->LoseSightRadius = 1225.f;
+	SightConfig->SightRadius = 1500.f;
+	SightConfig->LoseSightRadius = 1525.f;
 	SightConfig->PeripheralVisionAngleDegrees = 120.0f;
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;

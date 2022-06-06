@@ -7,7 +7,15 @@
 #include "Kismet/GameplayStatics.h"
 
 UGameOverWidget::UGameOverWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
-{}
+{
+	static ConstructorHelpers::FObjectFinder<USoundWave> GameOverWinSoundObject(TEXT("SoundWave'/Game/GEPlatformer/Audio/A_GameOverWin.A_GameOverWin'"));
+	if (GameOverWinSoundObject.Succeeded())
+		GameOverWinSound = GameOverWinSoundObject.Object;
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> GameOverLoseSoundObject(TEXT("SoundWave'/Game/GEPlatformer/Audio/A_GameOverLose.A_GameOverLose'"));
+	if (GameOverLoseSoundObject.Succeeded())
+		GameOverLoseSound = GameOverLoseSoundObject.Object;
+}
 
 void UGameOverWidget::NativeConstruct()
 {
@@ -18,10 +26,10 @@ void UGameOverWidget::NativeConstruct()
 
 void UGameOverWidget::InitializeWidgetElements(bool bIsGameWon)
 {
-	AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
+	AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (GEPGameMode)
 	{
-		GameOverScoreText->SetText(FText::FromString(FString::FromInt(GEPGameMode->GetTotalCoinsCount()) +
+		GameOverScoreText->SetText(FText::FromString(FString::FromInt(GEPGameMode->GetCoinsCount()) +
 			"/" + FString::FromInt(GEPGameMode->GetTotalCoinsCount())));
 
 		int GameTimeMinutes = (int)GEPGameMode->GetGameTime() / 60;
@@ -34,11 +42,13 @@ void UGameOverWidget::InitializeWidgetElements(bool bIsGameWon)
 
 		if (bIsGameWon)
 		{
+			UGameplayStatics::PlaySound2D(GetWorld(), GameOverWinSound, 1.f);
 			YouWinTitle->SetVisibility(ESlateVisibility::Visible);
 			YouLoseTitle->SetVisibility(ESlateVisibility::Hidden);
 		}
 		else
 		{
+			UGameplayStatics::PlaySound2D(GetWorld(), GameOverLoseSound, 1.f);
 			YouWinTitle->SetVisibility(ESlateVisibility::Hidden);
 			YouLoseTitle->SetVisibility(ESlateVisibility::Visible);
 		}

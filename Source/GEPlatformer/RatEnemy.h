@@ -10,12 +10,19 @@ class GEPLATFORMER_API ARatEnemy : public AEnemyCharacter
 {
 	GENERATED_BODY()
 
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class AAIController> ControllerClass;*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Audio", meta = (AllowPrivateAccess = "true"))
+	class UAudioComponent* AudioComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	class USoundWave* CrabWalkingSoundWave;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	class USoundAttenuation* SoundAttenuation;
 	
 public:
 	ARatEnemy();
 
+	void BeginPlay() override;
 	APatrolPath* GetPatrolPath();
 	int GetNumberOfPoints();
 

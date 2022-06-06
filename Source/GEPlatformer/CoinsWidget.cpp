@@ -26,5 +26,9 @@ void UCoinsWidget::UpdateHealthBar(float Value)
 	if(HealthBar)
 	{
 		HealthBar->SetPercent(Value);
+		if (HealthObtainedAnimation)
+		{
+			PlayAnimation(HealthObtainedAnimation, .0f, 1, EUMGSequencePlayMode::Forward, 4.f);
+		}
 	}
 }

@@ -9,6 +9,9 @@ class GEPLATFORMER_API UGameStartWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	class USoundWave* ClickSound;
+
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (BindWidget))

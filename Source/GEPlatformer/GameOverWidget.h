@@ -27,6 +27,12 @@ class GEPLATFORMER_API UGameOverWidget : public UUserWidget
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* YouWinTitle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	class USoundWave* GameOverWinSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	class USoundWave* GameOverLoseSound;
+
 public:
 	UGameOverWidget(const FObjectInitializer& ObjectInitializer);
 
