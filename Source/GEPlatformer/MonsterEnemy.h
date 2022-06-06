@@ -12,8 +12,14 @@ class GEPLATFORMER_API AMonsterEnemy : public AEnemyCharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	class UAnimMontage* AttackMontage;
 
+	float OriginalZCoord;
+
 public:
 	AMonsterEnemy();	
+
+	void BeginPlay() override;
+
+	void Tick(float DeltaSeconds);
 
 	float PlayAttacksMontage();
 };

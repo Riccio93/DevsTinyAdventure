@@ -50,8 +50,12 @@ public:
 	TSubclassOf<UUserWidget> GameOverWidgetClass;
 
 private:	
+	UPROPERTY()
 	UCoinsWidget* CoinsWidget;
+	UPROPERTY()
 	UGameStartWidget* GameStartWidget;
+	UPROPERTY()
 	UPauseMenuWidget* PauseMenuWidget;
+	UPROPERTY()
 	UGameOverWidget* GameOverWidget;
 };

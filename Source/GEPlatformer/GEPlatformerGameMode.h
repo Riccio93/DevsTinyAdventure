@@ -21,13 +21,12 @@ class AGEPlatformerGameMode : public AGameModeBase
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game", meta = (AllowPrivateAccess = "true"))
 	float HealthValue;
 
-	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Game", meta = (AllowPrivateAccess = "true"))
-	float MaxHealthValue;*/
-
 public:
 	AGEPlatformerGameMode();
 
 	void UpdateCoins(int Value);
+
+	int GetCoinsCount();
 
 	int GetTotalCoinsCount();
 

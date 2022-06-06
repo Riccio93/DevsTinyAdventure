@@ -314,7 +314,7 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		{
 			GEPGameMode->UpdateCoins(1);
 		}
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), CoinSoundCue, HitCoin->GetActorLocation(), 1.5f);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), CoinSoundCue, HitCoin->GetActorLocation(), 1.75f);
 		OtherActor->Destroy();
 	}
 
@@ -326,7 +326,7 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		{
 			GEPGameMode->UpdateHealth(GEPGameMode->HeartHealthRecover);
 		}
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), HeartSoundCue, HitHeart->GetActorLocation(), 4.f);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), HeartSoundCue, HitHeart->GetActorLocation(), 2.5f);
 		OtherActor->Destroy();	
 	}	
 }
@@ -339,7 +339,6 @@ void AMainCharacter::TakeDamage(float Value)
 		GEPGameMode->UpdateHealth(-Value);
 	}
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), TakeDamageSoundCue, GetActorLocation(), 1.f);
-
 
 	//TODO: Blink and be indestructible for a certain amount of time??
 }

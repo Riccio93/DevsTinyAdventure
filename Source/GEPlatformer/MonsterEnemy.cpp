@@ -3,13 +3,25 @@
 
 AMonsterEnemy::AMonsterEnemy()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	BoxComponent->InitBoxExtent(FVector(24.f, 24.f, 4.f));
 	BoxComponent->AddRelativeLocation(FVector(0.f, 0.f, 40.f));
 
-	//SkeletalMeshComponent->AddWorldRotation(FRotator(0.f, -90.f, 0.f));
 	SkeletalMeshComponent->AddRelativeLocation(FVector(0.f, 0.f, -25.f));
+
+}
+
+void AMonsterEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+	OriginalZCoord = GetActorLocation().Z;
+}
+
+void AMonsterEnemy::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, OriginalZCoord));
 }
 
 //Plays the attack animation montage

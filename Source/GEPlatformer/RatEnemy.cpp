@@ -36,7 +36,7 @@ void ARatEnemy::BeginPlay()
 	//Set crab's Walking sound
 	AudioComponent->SetSound(CrabWalkingSoundWave);
 	AudioComponent->AttenuationSettings = SoundAttenuation;
-	AudioComponent->SetVolumeMultiplier(.8f);
+	AudioComponent->SetVolumeMultiplier(.6f);
 	AudioComponent->Play();
 }
 

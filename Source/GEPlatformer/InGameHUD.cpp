@@ -90,6 +90,6 @@ void AInGameHUD::ShowGameOverScreen(bool bIsGameWon)
 		GetWorld()->GetFirstPlayerController()->SetPause(true);
 		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
 		GameOverWidget->InitializeWidgetElements(bIsGameWon);
-		GameOverWidget->AddToViewport(4);
+		GameOverWidget->AddToViewport(4);		
 	}
 }
