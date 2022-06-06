@@ -5,7 +5,6 @@
 #include "BehaviorTree/BehaviorTreeTypes.h"
 #include "FindPatrolPathLocation.generated.h"
 
-
 UCLASS()
 class GEPLATFORMER_API UFindPatrolPathLocation : public UBTTask_BlackboardBase
 {

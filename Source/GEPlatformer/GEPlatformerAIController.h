@@ -10,10 +10,7 @@ class GEPLATFORMER_API AGEPlatformerAIController : public AAIController
 {
 	GENERATED_BODY()
 
-
 public:
-
-	AGEPlatformerAIController(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(transient)
 	class UBehaviorTreeComponent* BehaviorTreeComponent;
@@ -23,16 +20,15 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = "AI")
 	class UAIPerceptionComponent* PerceptionComp;
+
 	UPROPERTY(transient)
 	class UAISenseConfig_Sight* SightConfig;
+
+	AGEPlatformerAIController(const FObjectInitializer& ObjectInitializer);	
 
 	void OnPossess(APawn* ControlledPawn) override;
 
 	UFUNCTION()
 	void OnSightUpdated(AActor* UpdatedActor, FAIStimulus Stimulus);
-
-	//Blackboard Keys IDs
-	//int BBPatrolLocationID;
-	//int BBPatrolPathIndexID;
 };
 

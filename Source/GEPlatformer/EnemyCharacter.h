@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/DefaultPawn.h"
+#include "GEPlatformerAIController.h"
 #include "EnemyCharacter.generated.h"
 
 UCLASS(Abstract, Blueprintable)
@@ -10,30 +11,26 @@ class GEPLATFORMER_API AEnemyCharacter : public ADefaultPawn
 {
 	GENERATED_BODY()
 
-		/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy, meta = (AllowPrivateAccess = "true"))
-		class USceneComponent* SceneComponent;*/
-
+	//Gameplay Values
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy, meta = (AllowPrivateAccess = "true"))
 	float AttackDamage;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Enemy, meta = (AllowPrivateAccess = "true"))
 	int CoinsGivenToPlayer;
 
 	bool bIsCapsuleOverlapping;
 
 protected:
-
+	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* BoxComponent;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy, meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* SkeletalMeshComponent;
 	
 public:	
-	// Sets default values for this actor's properties
 	AEnemyCharacter();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI")
+	//BT inherited and implemented by the child classes
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AI)
 	class UBehaviorTree* BehaviorTree;
 
 	//Collision functions

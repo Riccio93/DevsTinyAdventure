@@ -13,7 +13,5 @@ class GEPLATFORMER_API AHeart : public APickup
 	class USkeletalMeshComponent* SkeletalMeshComponent;
 
 public:
-	// Sets default values for this actor's properties
-	AHeart();
-	
+	AHeart();	
 };

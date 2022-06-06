@@ -1,25 +1,26 @@
 #include "EnemyCharacter.h"
+
+//Components
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
 
+//My classes
 #include "MainCharacter.h"
 #include "GEPlatformerGameMode.h"
 
 
-// Sets default values
 AEnemyCharacter::AEnemyCharacter()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+	//Components setup
 	GetCollisionComponent()->SetGenerateOverlapEvents(true);
 	GetCollisionComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnSphereOverlapBegin);
 	GetCollisionComponent()->OnComponentEndOverlap.AddDynamic(this, &AEnemyCharacter::OnSphereOverlapEnd);	
-
+	bUseControllerRotationYaw = true;
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>("BoxCollisionComponent");
 	BoxComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnBoxOverlapBegin);
-
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComponent");
 	SkeletalMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
@@ -28,12 +29,13 @@ AEnemyCharacter::AEnemyCharacter()
 	bIsCapsuleOverlapping = false;
 }
 
+//Collision with the body of the enemy - The player takes damage on contact
 void AEnemyCharacter::OnSphereOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if(AMainCharacter* MainCharacter = Cast<AMainCharacter>(OtherActor))
 	{
 		bIsCapsuleOverlapping = true;
-		MainCharacter->TakeDamage(AttackDamage);
+		MainCharacter->PlayerTakeDamage(AttackDamage);
 	}
 }
 
@@ -45,13 +47,18 @@ void AEnemyCharacter::OnSphereOverlapEnd(class UPrimitiveComponent* OverlappedCo
 	}
 }
 
+//Collision with the box on top of the enemy's head
 void AEnemyCharacter::OnBoxOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (AMainCharacter* MainCharacter = Cast<AMainCharacter>(OtherActor))
 	{
+		//If the player is overlapping with both the box and the sphere collider, it won't die
+		//(e.g. the player is just standing in the enemy's mesh)
+		//So it only dies if the player only collides with the box
 		if(!bIsCapsuleOverlapping)
 		{
 			this->Destroy();
+			//The player auto-jumps
 			MainCharacter->EnemyKilledJump();
 			if(AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode()))
 			{

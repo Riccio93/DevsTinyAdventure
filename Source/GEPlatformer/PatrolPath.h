@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,12 +11,11 @@ class GEPLATFORMER_API APatrolPath : public AActor
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (MakeEditWidget = "true", AllowPrivateAccess = "true"))
 	TArray<FVector> PatrolPoints;
-
 	
 public:	
-	// Sets default values for this actor's properties
 	APatrolPath();
 
 	FVector getPatrolPoint(int const index) const;
+
 	int NumberOfPoints() const;
 };

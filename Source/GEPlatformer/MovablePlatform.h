@@ -17,5 +17,4 @@ class GEPLATFORMER_API AMovablePlatform : public AActor
 	
 public:	
 	AMovablePlatform();
-
 };

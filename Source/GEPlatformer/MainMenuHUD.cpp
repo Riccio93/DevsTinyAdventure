@@ -16,7 +16,7 @@ void AMainMenuHUD::BeginPlay()
 		MainMenuWidget = CreateWidget<UMainMenuWidget>(GetWorld(), MainMenuWidgetClass);
 		if (MainMenuWidget)
 		{
-			MainMenuWidget->AddToViewport();
+			MainMenuWidget->AddToViewport(1);
 		}
 	}
 }

@@ -7,6 +7,7 @@ void AInGameHUD::DrawHUD()
 	Super::DrawHUD();
 }
 
+//Creates all the widgets and adds to the viewport the ones present at the start
 void AInGameHUD::BeginPlay()
 {
 	Super::BeginPlay();
@@ -28,6 +29,8 @@ void AInGameHUD::BeginPlay()
 			GameStartWidget->AddToViewport(2);
 		}
 	}
+
+	//Shows the mouse cursor to navigate the buttons screen
 	GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeUIOnly());
 	GetWorld()->GetFirstPlayerController()->SetPause(true);
 	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
@@ -75,6 +78,7 @@ void AInGameHUD::OpenPauseMenu()
 {
 	if (PauseMenuWidget && !GameStartWidget->IsInViewport())
 	{
+		//Shows the mouse cursor to navigate the pause screen
 		GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeUIOnly());
 		GetWorld()->GetFirstPlayerController()->SetPause(true);
 		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
@@ -86,6 +90,7 @@ void AInGameHUD::ShowGameOverScreen(bool bIsGameWon)
 {
 	if(GameOverWidget)
 	{
+		//Shows the mouse cursor to navigate the game over screen
 		GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeUIOnly());
 		GetWorld()->GetFirstPlayerController()->SetPause(true);
 		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;

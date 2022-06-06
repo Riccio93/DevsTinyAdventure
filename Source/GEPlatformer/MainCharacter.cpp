@@ -4,38 +4,32 @@
 #include "Kismet/GameplayStatics.h"
 #include "Math/UnrealMathUtility.h"
 #include "Components/PrimitiveComponent.h"
+#include "Sound/SoundCue.h"
+
 //Components
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+
 //My Classes
 #include "InGameHUD.h"
 #include "GEPlatformerGameMode.h"
 #include "Coin.h"
 #include "Heart.h"
 
-#include "Sound/SoundCue.h"
-
 AMainCharacter::AMainCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	//Configure Capsule Component
+	//Components setup
 	GetCapsuleComponent()->InitCapsuleSize(25.f, 82.f);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMainCharacter::OnOverlapBegin);
-	//GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AMainCharacter::OnOverlapEnd);
-
-	//Create components and attach them
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
 	SpringArmComponent->SetupAttachment(RootComponent);
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->AttachToComponent(SpringArmComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	/*AudioComponent = CreateDefaultSubobject<UAudioComponent>("AudioComponent");
-	AudioComponent->SetupAttachment(RootComponent);*/
-	
-	//Configure Spring arm's defaults
 	SpringArmComponent->bUsePawnControlRotation = true;
 	SpringArmComponent->bEnableCameraLag = true;
 	SpringArmComponent->CameraLagSpeed = 4.f;
@@ -46,6 +40,7 @@ AMainCharacter::AMainCharacter()
 	//Configure Character Movement's defaults...
 	GetCharacterMovement()->bOrientRotationToMovement = true;            //Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f); //...at this rotation rate
+	bUseControllerRotationYaw = false;
     DefaultWalkSpeed = GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	SprintMultiplier = 2.5f;
 	WalkMultiplier = .5f;
@@ -60,8 +55,8 @@ AMainCharacter::AMainCharacter()
 	WallJumpForwardForce = -550.f;
 	WallJumpVerticalForce = 1300.f;
 	bResetVelocityOnce = true;
-	GetCharacterMovement()->AirControl = .05f; //At 1 the character can use the wall jump to climb a single wall, set at 0.05 if we don't want that
-
+	GetCharacterMovement()->AirControl = .05f; //At 1 the character can use the wall jump to climb a single wall, at 0.05 he can't
+	
 	//Get animation montages
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DoubleJumpMontageObject(TEXT("/Game/GEPlatformer/Characters/Devvy/Animations/AM_Devvy_DoubleJump.AM_Devvy_DoubleJump"));
 	if(DoubleJumpMontageObject.Succeeded())
@@ -87,12 +82,6 @@ AMainCharacter::AMainCharacter()
 	static ConstructorHelpers::FObjectFinder<USoundCue> TakeDamageSoundCueObject(TEXT("SoundCue'/Game/GEPlatformer/Audio/A_TakeDamage_Cue.A_TakeDamage_Cue'"));
 	if (TakeDamageSoundCueObject.Succeeded())
 		TakeDamageSoundCue = TakeDamageSoundCueObject.Object;
-
-	/*CurrentCoinsCount = 0;
-	TotalCoinsCount = 5;
-	MaxHealthValue = 1.f;
-	HealthValue = .5f;*/
-	//HeartHealthRecover = .25f;
 }
 
 void AMainCharacter::BeginPlay()
@@ -206,19 +195,21 @@ void AMainCharacter::Jump()
 {
 	if (bIsInWallSlide)
 	{
-		//WallJump
+		//If the character is touching a Jumpwall, make a walljump when pressing space
 		ACharacter::PlayAnimMontage(DoubleJumpMontage, 1, NAME_None);
 		GetCharacterMovement()->Velocity.Z = 0;
+		//Launches the character up and in the direction of the normal to the wall
 		LaunchCharacter((GetActorForwardVector() * WallJumpForwardForce) + FVector(0.f, 0.f, WallJumpVerticalForce), true, true);
+		//SFX
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), JumpSoundCue, GetActorLocation(), 1.f);
 	}
 	else
 	{
 		if(JumpCount < JumpMaxCount)
 		{
+			//If the character is in the air, make a double jump
 			if(GetCharacterMovement()->IsFalling())
 			{
-				//Double Jump (in the air)
 				ACharacter::PlayAnimMontage(DoubleJumpMontage, 1, NAME_None);
 				GetCharacterMovement()->Velocity.Z = 0;
 				LaunchCharacter(GetCharacterMovement()->Velocity + FVector(0.f, 0.f, AirJumpForce), true, true);
@@ -230,6 +221,7 @@ void AMainCharacter::Jump()
 				Super::Jump();
 				JumpCount++;
 			}
+			//SFX
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), JumpSoundCue, GetActorLocation(), 1.f);
 		}	
 	}
@@ -248,6 +240,7 @@ void AMainCharacter::Landed(const FHitResult& Hit)
 
 void AMainCharacter::EnemyKilledJump()
 {
+	//Automatically jump when killing an enemy from above
 	Super::Jump();
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), EnemyDeathSoundCue, GetActorLocation(), 2.f);
 }
@@ -261,7 +254,7 @@ void AMainCharacter::WallJumpChecks()
 		TArray<AActor*> ActorsToIgnore;
 		ActorsToIgnore.Add(this);
 		FHitResult OutHit;
-		//Trace channel with walls suitable for wall jumps
+		//Trace channel with walls suitable for wall jumps (JumpWall in editor)
 		ETraceTypeQuery JumpWallTrace = UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_GameTraceChannel3);
 		UKismetSystemLibrary::CapsuleTraceSingle(GetWorld(), GetActorLocation(), GetActorLocation(), GetCapsuleComponent()->GetUnscaledCapsuleRadius() + 1.f, GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(), JumpWallTrace, false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
 		bIsInWallSlide = OutHit.bBlockingHit;	
@@ -269,7 +262,8 @@ void AMainCharacter::WallJumpChecks()
 		if (bIsInWallSlide)
 		{
 			//Turn in the opposite direction of the wall normal (ready to jump away)
-			SetActorRotation(UKismetMathLibrary::MakeRotFromX(-OutHit.Normal));			
+			SetActorRotation(UKismetMathLibrary::MakeRotFromX(-OutHit.Normal));	
+			//Even if the character has no jumps left, after a wall jump he can always make a double jump
 			JumpCount = JumpMaxCount - 1;
 			if (GetCharacterMovement()->Velocity.Z <= 0)
 			{
@@ -287,7 +281,7 @@ void AMainCharacter::WallJumpChecks()
 		}
 		else
 		{
-			//When leaving the wall remove "friction" (lowered gravity)
+			//When leaving the wall remove "friction" with it (lowered gravity)
 			GetCharacterMovement()->GravityScale = DefaultGravity;
 			bResetVelocityOnce = true;
 		}
@@ -300,10 +294,11 @@ void AMainCharacter::WallJumpChecks()
 
 void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	//If the character touches the kill plane, he's dead
 	if(OtherActor->ActorHasTag("KillPlane"))
 	{
 		AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
-		TakeDamage(GEPGameMode->MaxHealthValue);
+		PlayerTakeDamage(GEPGameMode->MaxHealthValue);
 	}
 
 	//When collecting a coin, destroy it and add a point
@@ -314,11 +309,12 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		{
 			GEPGameMode->UpdateCoins(1);
 		}
+		//SFX
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), CoinSoundCue, HitCoin->GetActorLocation(), 1.75f);
 		OtherActor->Destroy();
 	}
 
-	//When collecting an heart, some health is recovered
+	//When collecting an heart, destroy it and recover some health
 	if(AHeart* HitHeart = Cast<AHeart>(OtherActor))
 	{
 		AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
@@ -326,30 +322,25 @@ void AMainCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		{
 			GEPGameMode->UpdateHealth(GEPGameMode->HeartHealthRecover);
 		}
+		//SFX
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), HeartSoundCue, HitHeart->GetActorLocation(), 2.5f);
 		OtherActor->Destroy();	
 	}	
 }
 
-void AMainCharacter::TakeDamage(float Value)
+void AMainCharacter::PlayerTakeDamage(float Value)
 {
 	AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
 	if(GEPGameMode)
 	{
 		GEPGameMode->UpdateHealth(-Value);
 	}
+	//SFX
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), TakeDamageSoundCue, GetActorLocation(), 1.f);
+
+	
 
 	//TODO: Blink and be indestructible for a certain amount of time??
 }
-
-//void AMainCharacter::RecoverHealth(float Value)
-//{
-//	AGEPlatformerGameMode* GEPGameMode = Cast<AGEPlatformerGameMode>(GetWorld()->GetAuthGameMode());
-//	if (GEPGameMode)
-//	{
-//		GEPGameMode->UpdateHealth(Value);
-//	}
-//}
 
 #pragma endregion

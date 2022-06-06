@@ -25,8 +25,5 @@ public:
 	void QuitGame();
 
 	UFUNCTION()
-	void PlayGame();
-	
-	
-	
+	void PlayGame();	
 };

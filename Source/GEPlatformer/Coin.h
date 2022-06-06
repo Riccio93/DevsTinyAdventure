@@ -16,6 +16,5 @@ class GEPLATFORMER_API ACoin : public APickup
 	class UStaticMeshComponent* SMeshComponent;
 	
 public:
-	// Sets default values for this actor's properties
 	ACoin();
 };

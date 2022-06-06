@@ -12,7 +12,7 @@ class GEPLATFORMER_API AVanishingPlatform : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Platform, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* SMeshComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Platform, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Platform, meta = (AllowPrivateAccess = "true"))
 	float DestroyTime;
 
 	FVector OriginalLocation;
@@ -28,5 +28,6 @@ public:
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	void PlatformFall();
+
 	void RespawnPlatform();
 };

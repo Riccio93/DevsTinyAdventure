@@ -4,9 +4,6 @@
 #include "GameFramework/PlayerController.h"
 #include "MainMenuPlayerController.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class GEPLATFORMER_API AMainMenuPlayerController : public APlayerController
 {

@@ -2,8 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-
+//Components
 #include "Components/WidgetComponent.h"
+//My Classes
 #include "CoinsWidget.h"
 #include "GameStartWidget.h"
 #include "PauseMenuWidget.h"
@@ -15,6 +16,15 @@ UCLASS()
 class GEPLATFORMER_API AInGameHUD : public AHUD
 {
 	GENERATED_BODY()
+
+	UPROPERTY()
+	UCoinsWidget* CoinsWidget;
+	UPROPERTY()
+	UGameStartWidget* GameStartWidget;
+	UPROPERTY()
+	UPauseMenuWidget* PauseMenuWidget;
+	UPROPERTY()
+	UGameOverWidget* GameOverWidget;
 
 public:
 	AInGameHUD();
@@ -47,15 +57,5 @@ public:
 	TSubclassOf<UUserWidget> PauseMenuWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
-	TSubclassOf<UUserWidget> GameOverWidgetClass;
-
-private:	
-	UPROPERTY()
-	UCoinsWidget* CoinsWidget;
-	UPROPERTY()
-	UGameStartWidget* GameStartWidget;
-	UPROPERTY()
-	UPauseMenuWidget* PauseMenuWidget;
-	UPROPERTY()
-	UGameOverWidget* GameOverWidget;
+	TSubclassOf<UUserWidget> GameOverWidgetClass;	
 };

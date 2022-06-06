@@ -1,7 +1,9 @@
 #include "IncrementPatrolPathIndex.h"
-#include "GEPlatformerAIController.h"
+//Components
 #include "BehaviorTree/BlackboardComponent.h"
+//My Classes
 #include "RatEnemy.h"
+#include "GEPlatformerAIController.h"
 
 UIncrementPatrolPathIndex::UIncrementPatrolPathIndex(FObjectInitializer const& ObjectInitializer)
 {
@@ -10,26 +12,29 @@ UIncrementPatrolPathIndex::UIncrementPatrolPathIndex(FObjectInitializer const& O
 
 EBTNodeResult::Type UIncrementPatrolPathIndex::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	//Get the AI controller
 	AGEPlatformerAIController* const Controller = Cast<AGEPlatformerAIController>(OwnerComp.GetAIOwner());
 
-	ARatEnemy* const Enemy = Cast<ARatEnemy>(Controller->GetPawn());
-
-	int const NumberOfPoints = Enemy->GetNumberOfPoints();
-
-	int index = Controller->BlackboardComponent->GetValueAsInt("PatrolPathIndex");
-
-	if(index == NumberOfPoints - 1)
+	//Only crab enemies use patrol paths
+	if(ARatEnemy* const Enemy = Cast<ARatEnemy>(Controller->GetPawn()))
 	{
-		index = 0;
+		int const NumberOfPoints = Enemy->GetNumberOfPoints();
+		int index = Controller->BlackboardComponent->GetValueAsInt("PatrolPathIndex");
+		//Compute the next index to go to and write it back on the blackboard
+		if (index == NumberOfPoints - 1)
+		{
+			index = 0;
+		}
+		else
+		{
+			index++;
+		}
+		Controller->BlackboardComponent->SetValueAsInt("PatrolPathIndex", index);
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		return EBTNodeResult::Succeeded;
 	}
 	else
 	{
-		index++;
-	}
-
-	Controller->BlackboardComponent->SetValueAsInt("PatrolPathIndex", index);
-
-	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-	return EBTNodeResult::Succeeded;
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+		return EBTNodeResult::Failed;
+	}	
 }

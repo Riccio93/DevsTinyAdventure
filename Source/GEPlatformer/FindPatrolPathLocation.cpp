@@ -1,6 +1,8 @@
 #include "FindPatrolPathLocation.h"
-#include "GEPlatformerAIController.h"
+//Components
 #include "BehaviorTree/BlackboardComponent.h"
+//My Classes
+#include "GEPlatformerAIController.h"
 #include "EnemyCharacter.h"
 #include "RatEnemy.h"
 
@@ -15,7 +17,7 @@ EBTNodeResult::Type UFindPatrolPathLocation::ExecuteTask(UBehaviorTreeComponent&
 	AGEPlatformerAIController* const AIController = Cast<AGEPlatformerAIController>(OwnerBTComponent.GetAIOwner());
 	int const PathPatrolIndex = AIController->BlackboardComponent->GetValueAsInt("PatrolPathIndex");
 
-	//The patrolling is only possible for rat enemies
+	//The patrolling on a path is only meant for rat enemies
 	if(ARatEnemy* const RatEnemy = Cast<ARatEnemy>(AIController->GetPawn()))
 	{
 		//Use the index to get the current patrol path location, transform to global coordinates and write it on the blackboard

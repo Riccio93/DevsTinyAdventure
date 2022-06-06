@@ -4,14 +4,13 @@
 #include "Kismet/KismetSystemLibrary.h"
 
 UMainMenuWidget::UMainMenuWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
-{
-
-}
+{}
 
 void UMainMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	//Sets delegates for button presses
 	PlayButton->OnClicked.AddDynamic(this, &UMainMenuWidget::PlayGame);
 	QuitButton->OnClicked.AddDynamic(this, &UMainMenuWidget::QuitGame);
 }

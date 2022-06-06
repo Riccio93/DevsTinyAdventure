@@ -1,10 +1,9 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #include "GEPlatformerGameMode.h"
+#include "UObject/ConstructorHelpers.h"
+//My Classes
 #include "MainCharacter.h"
 #include "InGameHUD.h"
 #include "GEPlatformerPlayerController.h"
-#include "UObject/ConstructorHelpers.h"
 
 AGEPlatformerGameMode::AGEPlatformerGameMode()
 {
@@ -94,5 +93,4 @@ void AGEPlatformerGameMode::UpdateHealth(float Value)
 			InGameHUD->ShowGameOverScreen(false);			
 		}
 	}
-
 }

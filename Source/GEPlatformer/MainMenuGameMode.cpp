@@ -1,9 +1,9 @@
 #include "MainMenuGameMode.h"
-
-#include "GEPlatformerGameMode.h"
-#include "MainMenuHUD.h"
 #include "MainMenuPlayerController.h"
 #include "UObject/ConstructorHelpers.h"
+//My Classes
+#include "GEPlatformerGameMode.h"
+#include "MainMenuHUD.h"
 
 AMainMenuGameMode::AMainMenuGameMode()
 {

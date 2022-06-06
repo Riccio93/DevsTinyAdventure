@@ -1,22 +1,24 @@
 #include "GEPlatformerAIController.h"
-#include "EnemyCharacter.h"
-#include "MonsterEnemy.h"
-#include "MainCharacter.h"
-
+//Components
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+//My Classes
+#include "EnemyCharacter.h"
+#include "MonsterEnemy.h"
+#include "MainCharacter.h"
 
 AGEPlatformerAIController::AGEPlatformerAIController(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	//Components Setup
 	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard Component"));
 	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("Behavior Tree Component"));
 
-	//AIPerception
+	//AIPerception Setup
 	PerceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception Component"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("AI Sight Config"));
 	SightConfig->SightRadius = 1500.f;
@@ -35,14 +37,11 @@ void AGEPlatformerAIController::OnSightUpdated(AActor* UpdatedActor, FAIStimulus
 	{
 		if(Stimulus.WasSuccessfullySensed())
 		{
-			//Timer??
 			GetBlackboardComponent()->SetValueAsObject("EnemyActor", MC);
-			UE_LOG(LogTemp, Warning, TEXT("Detecting!"));
 		}
 		else
 		{
 			GetBlackboardComponent()->SetValueAsObject("EnemyActor", nullptr);
-			UE_LOG(LogTemp, Warning, TEXT("Not detecting!"));
 		}		
 	}	
 }
@@ -57,11 +56,7 @@ void AGEPlatformerAIController::OnPossess(APawn* ControlledPawn)
 		BlackboardComponent->InitializeBlackboard(*Enemy->BehaviorTree->BlackboardAsset);
 		BehaviorTreeComponent->StartTree(*Enemy->BehaviorTree);
 
-		//Set Blackboard keys ID
-		/*BBPatrolLocationID = BlackboardComponent->GetKeyID("PatrolLocation");
-		BBPatrolPathIndexID = BlackboardComponent->GetKeyID("PatrolPathIndex");*/
-
-		//Perception is only allowed when the enemy is a monster
+		//Perception is only allowed when the enemy is a monster enemy (the crab just patrols on a set path)
 		if(AMonsterEnemy* MonsterEnemy = Cast<AMonsterEnemy>(Enemy))
 		{
 			PerceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &AGEPlatformerAIController::OnSightUpdated);

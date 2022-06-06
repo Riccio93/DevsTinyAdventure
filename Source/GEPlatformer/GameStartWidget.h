@@ -12,11 +12,10 @@ class GEPLATFORMER_API UGameStartWidget : public UUserWidget
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio, meta = (AllowPrivateAccess = "true"))
 	class USoundWave* ClickSound;
 
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* BeginButton;
 
+public:
 	UGameStartWidget(const FObjectInitializer& ObjectInitializer);
 
 	void NativeConstruct();

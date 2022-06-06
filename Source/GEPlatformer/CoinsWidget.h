@@ -10,6 +10,18 @@ class GEPLATFORMER_API UCoinsWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	UTextBlock* CoinsCountText;
+
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	UProgressBar* HealthBar;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	UWidgetAnimation* CoinObtainedAnimation;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	UWidgetAnimation* HealthObtainedAnimation;
+
 public:
 	UCoinsWidget(const FObjectInitializer& ObjectInitializer);
 
@@ -17,20 +29,5 @@ public:
 
 	void UpdateCoinsCount(int Value, int Total);
 
-	void UpdateHealthBar(float Value);
-
-	//void ResetCoins();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UTextBlock* CoinsCountText;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UProgressBar* HealthBar;
-
-private:
-	UPROPERTY(Transient, meta = (BindWidgetAnim))
-	UWidgetAnimation* CoinObtainedAnimation;
-
-	UPROPERTY(Transient, meta = (BindWidgetAnim))
-	UWidgetAnimation* HealthObtainedAnimation;
+	void UpdateHealthBar(float Value);	
 };

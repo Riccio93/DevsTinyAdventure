@@ -20,6 +20,5 @@ protected:
 	class UPointLightComponent* PointLightComponent;
 
 public:	
-	// Sets default values for this actor's properties
 	APickup();
 };
