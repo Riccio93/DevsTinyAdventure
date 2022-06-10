@@ -6,6 +6,8 @@
 #include "MonsterEnemy.h"
 #include "NavigationSystem.h"
 
+//Behavior Tree Task
+
 UFindRandomSpotInRadius::UFindRandomSpotInRadius(FObjectInitializer const& ObjectInitializer)
 {
 	NodeName = TEXT("Find Random Spot In Radius");

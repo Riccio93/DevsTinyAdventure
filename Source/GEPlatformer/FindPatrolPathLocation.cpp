@@ -6,6 +6,8 @@
 #include "EnemyCharacter.h"
 #include "RatEnemy.h"
 
+//Behavior Tree Task
+
 UFindPatrolPathLocation::UFindPatrolPathLocation(const FObjectInitializer& ObjectInitializer)
 {
 	NodeName = TEXT("Find Patrol Path Location");

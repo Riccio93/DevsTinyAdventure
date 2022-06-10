@@ -5,6 +5,8 @@
 #include "RatEnemy.h"
 #include "GEPlatformerAIController.h"
 
+//Behavior Tree Task
+
 UIncrementPatrolPathIndex::UIncrementPatrolPathIndex(FObjectInitializer const& ObjectInitializer)
 {
 	NodeName = TEXT("Increment Patrol Path Index");

@@ -50,6 +50,7 @@ void AGEPlatformerGameMode::UpdateCoins(int Value)
 	{
 		if(InGameHUD)
 		{
+			//true means that the game over screen will show that the player has won
 			InGameHUD->ShowGameOverScreen(true);
 		}
 	}
@@ -90,6 +91,7 @@ void AGEPlatformerGameMode::UpdateHealth(float Value)
 	{
 		if (InGameHUD)
 		{
+			//false means that the game over screen will show that the player has lost
 			InGameHUD->ShowGameOverScreen(false);			
 		}
 	}

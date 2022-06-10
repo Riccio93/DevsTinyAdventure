@@ -338,8 +338,6 @@ void AMainCharacter::PlayerTakeDamage(float Value)
 	//SFX
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), TakeDamageSoundCue, GetActorLocation(), 1.f);
 
-	
-
 	//TODO: Blink and be indestructible for a certain amount of time??
 }
 

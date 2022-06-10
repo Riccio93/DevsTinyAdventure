@@ -3,6 +3,8 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "GEPlatformerAIController.h"
 
+//Behavior Tree Task
+
 //Task that updates the speed of an Enemy Pawn to the desired value
 UChangeAISpeed::UChangeAISpeed(FObjectInitializer const& ObjectInitializer)
 {
