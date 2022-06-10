@@ -1,9 +1,9 @@
-# Dev's Little Adventure
+# Dev's Tiny Adventure
 
 ## Description
 
 In the game you play as Dev in his quest to obtain all the 150 coins scattered through the level.
-Coins can be collected from both actual coin objects in the map and by defeating enemies.
+Coins can be collected from both actual coin objects in the map and by defeating enemies by jumping on their head.
 
 ## Features and mechanics
 
@@ -14,7 +14,7 @@ Coins can be collected from both actual coin objects in the map and by defeating
 - SHIFT - Sprint
 - CTRL - Walk Slowly (handy for enemies!)
 - ESC - Pause Menu
-- Mouse - Navigate menus
+- Mouse - Navigate menus and look around
 
 ### Dev's capabilities
 
@@ -32,7 +32,7 @@ After ~ 6 seconds said platforms reappear at the original location.
 - If you find yourself at low health you can acquire one of the hearts in the level to recover a little bit of it.
 - Look out for cloud platforms, as they are essential to reach new parts of the map.
 
-## Enemies
+### Enemies
 
 1. Crabs: follow a fixed patrol path and ignore the player.
 The player takes damage if there's a collision with the body.
@@ -51,8 +51,11 @@ Two ulterior classes inherit from this one, RatEnemy and MonsterEnemy, that cont
 Like for the enemies two classes inherit from this one, Coin and Heart, that hold the dedicated logic for the pickup type.
 
 
-## Technologies
+### Technologies
 Unreal Engine 4.27.2
 
-## Plugins
-[UE4GitPlugin]https://github.com/SRombauts/UE4GitPlugin
+### Plugins
+https://github.com/SRombauts/UE4GitPlugin
+
+### Walkthrough video
+https://www.youtube.com/watch?v=J-9oZJ0zXbY
