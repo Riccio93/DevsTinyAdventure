@@ -56,6 +56,3 @@ Unreal Engine 4.27.2
 
 ### Plugins
 https://github.com/SRombauts/UE4GitPlugin
-
-### Walkthrough video
-https://www.youtube.com/watch?v=J-9oZJ0zXbY
